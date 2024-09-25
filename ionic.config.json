@@ -1,0 +1,7 @@
+{
+  "name": "gestor-de-notas",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
