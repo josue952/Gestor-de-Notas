@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-login',
@@ -9,7 +12,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class LoginPage implements OnInit {
   loginForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthService, // Inyectamos el servicio de autenticación
+    private router: Router,           // Inyectamos el enrutador para redirigir
+    private alertController: AlertController // Inyectamos el controlador de alertas
+  ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
@@ -17,17 +25,39 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit() {
-    // Any additional initialization can go here
+    // Cualquier lógica de inicialización adicional
   }
 
   onSubmit() {
     if (this.loginForm.valid) {
-      console.log('Login form submitted', this.loginForm.value);
-      // Aquí puedes agregar la lógica para manejar el inicio de sesión
+      const { email, password } = this.loginForm.value;
+  
+      // Llamamos al servicio de autenticación y manejamos la promesa con then/catch
+      this.authService.login(email, password)
+        .then(async (response: any) => {
+          console.log('Login exitoso', response);
+  
+          // Guardamos el token en el localStorage
+          localStorage.setItem('auth_token', response.token);
+  
+          // Redirigir al dashboard
+          this.router.navigate(['/dashboard']);
+        })
+        .catch(async (error: any) => {
+          console.error('Error en login', error);
+  
+          // Mostrar alerta de error
+          const alert = await this.alertController.create({
+            header: 'Login Failed',
+            message: 'Incorrect email or password. Please try again.',
+            buttons: ['OK']
+          });
+          await alert.present();
+        });
     }
   }
 
-  // Helper methods to simplify template code
+  // Métodos auxiliares para acceder a los controles del formulario
   get emailControl() {
     return this.loginForm.get('email');
   }

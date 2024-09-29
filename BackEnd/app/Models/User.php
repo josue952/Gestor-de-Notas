@@ -12,34 +12,20 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    // Especifica la tabla y la clave primaria si no son las predeterminadas
+    protected $table = 'users';
+    protected $primaryKey = 'id_usuario';
+
+    // Los campos que se pueden asignar masivamente
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'username', 'nombre', 'apellido', 'email', 'password', 'rol',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
+    // Oculta los campos que no quieres exponer en la respuesta JSON
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password', 'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-    ];
+    // Automáticamente añade `created_at` y `updated_at`
+    public $timestamps = true;
 }

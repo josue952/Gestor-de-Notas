@@ -2,13 +2,13 @@ CREATE DATABASE gestor_notas;
 USE gestor_notas;
 
 -- Tabla Usuarios
-CREATE TABLE Usuarios (
+CREATE TABLE users (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
-    correo VARCHAR(100) NOT NULL UNIQUE,
-    contraseña VARCHAR(255) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
     rol ENUM('Maestro', 'Alumno') NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
