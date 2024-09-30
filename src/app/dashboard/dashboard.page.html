@@ -1,13 +1,69 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>dashboard</ion-title>
+    <ion-title>Dashboard</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content id="main-content" [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">dashboard</ion-title>
+      <ion-title size="large">Dashboard</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <!-- Contenedor principal con Sidebar y Contenido -->
+  <div class="dashboard-container">
+    <!-- SideBar -->
+    <app-sidebar></app-sidebar>
+
+    <!-- Contenido del Dashboard -->
+    <div class="dashboard-content">
+      <h1 class="text-3xl font-bold mb-6">
+        {{ userType === 'Alumno' ? 'Dashboard del Estudiante' : 'Dashboard del Profesor' }}
+      </h1>
+
+      <ng-container *ngIf="userType === 'Alumno'">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Resumen de Notas</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="grid grid-cols-2 gap-4">
+              <div *ngFor="let grade of studentGrades" class="bg-gray-100 p-4 rounded-lg">
+                <h3 class="font-semibold">{{ grade.subject }}</h3>
+                <p class="text-2xl font-bold" [ngClass]="{
+                  'text-green-600': grade.grade >= 90,
+                  'text-yellow-600': grade.grade >= 70 && grade.grade < 90,
+                  'text-red-600': grade.grade < 70
+                }">{{ grade.grade }}</p>
+              </div>
+            </div>
+            <div class="mt-6 text-center">
+              <p class="text-xl">Promedio General</p>
+              <p class="text-3xl font-bold text-blue-600">{{ getAverageGrade() }}</p>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ng-container>
+
+      <ng-container *ngIf="userType === 'Maestro'">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Alumnos Pendientes de Calificación</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              <ion-item *ngFor="let pending of pendingGrades">
+                <ion-label>
+                  <h2>{{ pending.student }}</h2>
+                  <p>{{ pending.subject }}</p>
+                </ion-label>
+                <ion-button slot="end" fill="outline">Calificar</ion-button>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ng-container>
+    </div>
+  </div>
 </ion-content>
