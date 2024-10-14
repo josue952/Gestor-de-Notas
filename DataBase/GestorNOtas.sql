@@ -14,6 +14,7 @@ CREATE TABLE users (
 );
 
 -- Tabla Clases
+
 CREATE TABLE Clases (
     id_clase INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
