@@ -1,0 +1,87 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title class="ion-text-center">Gestión de Grados</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Formulario principal para agregar o editar un grado -->
+  <form (ngSubmit)="editando ? agregarGrado() : agregarGrado()" #gradoForm="ngForm" class="grado-form">
+    <ion-item>
+      <ion-label position="floating">Nombre</ion-label>
+      <ion-input 
+        [(ngModel)]="nuevoGrado.nombre" 
+        name="nombre" 
+        required 
+        placeholder="Ingrese el nombre del grado">
+      </ion-input>
+    </ion-item>
+    
+    <ion-item>
+      <ion-label position="floating">Descripción</ion-label>
+      <ion-input 
+        [(ngModel)]="nuevoGrado.descripcion" 
+        name="descripcion" 
+        required 
+        placeholder="Ingrese la descripción del grado">
+      </ion-input>
+    </ion-item>
+
+    <ion-button 
+      type="submit" 
+      expand="full" 
+      color="success" 
+      class="submit-button">
+      {{ editando ? 'Actualizar' : 'Agregar' }}
+    </ion-button>
+
+    <ion-button 
+      *ngIf="editando" 
+      expand="full" 
+      color="medium" 
+      (click)="cancelarEdicion()" 
+      class="cancel-button">
+      Cancelar
+    </ion-button>
+  </form>
+
+  <!-- Lista de grados -->
+  <ion-list>
+    <ion-item *ngFor="let grado of grados; let i = index" class="grado-item">
+      <ion-label>
+        <h2 class="grado-title">{{ grado.nombre }}</h2>
+        <p class="grado-description">{{ grado.descripcion }}</p>
+      </ion-label>
+      
+      <ion-buttons slot="end">
+        <ion-button 
+          color="secondary" 
+          fill="outline" 
+          (click)="editarGrado(grado, i)">
+          Editar
+        </ion-button>
+        <ion-button 
+          color="danger" 
+          fill="outline" 
+          (click)="eliminarGrado(i)">
+          Eliminar
+        </ion-button>
+      </ion-buttons>
+      
+      <!-- Mostrar el formulario de edición solo si se está editando este grado -->
+      <div *ngIf="gradoEditando === i" class="editar-formulario">
+        <form (ngSubmit)="agregarGrado()" #editarForm="ngForm">
+          <ion-item>
+            <ion-label position="floating">Editar Nombre</ion-label>
+            <ion-input [(ngModel)]="gradoEditado.nombre" name="nombreEditar" required></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Editar Descripción</ion-label>
+            <ion-input [(ngModel)]="gradoEditado.descripcion" name="descripcionEditar" required></ion-input>
+          </ion-item>
+          <ion-button type="submit" expand="full" color="success">Guardar Cambios</ion-button>
+        </form>
+      </div>
+    </ion-item>
+  </ion-list>
+</ion-content>
