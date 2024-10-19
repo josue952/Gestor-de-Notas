@@ -1,14 +1,10 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <!-- Utiliza ion-grid para asegurar flexibilidad -->
     <ion-grid>
       <ion-row class="ion-align-items-center">
-        <!-- Título del Dashboard -->
         <ion-col size="10">
           <ion-title>Dashboard</ion-title>
         </ion-col>
-
-        <!-- Contenedor para el Logout -->
         <ion-col size="2" class="ion-text-right">
           <app-logout></app-logout>
         </ion-col>
@@ -18,25 +14,20 @@
 </ion-header>
 
 <ion-content id="main-content" [fullscreen]="true">
-  <!-- Header Condensado -->
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">Dashboard</ion-title>
     </ion-toolbar>
   </ion-header>
-
-  <!-- Contenedor principal con Sidebar y Contenido -->
+  
   <div class="dashboard-container">
-    <!-- SideBar -->
     <app-sidebar></app-sidebar>
-
-    <!-- Contenido del Dashboard -->
+    
     <div class="dashboard-content">
       <h1 class="text-3xl font-bold mb-6">
         {{ userType === 'Alumno' ? 'Dashboard del Estudiante' : 'Dashboard del Profesor' }}
       </h1>
 
-      <!-- Contenido para Alumno o Maestro -->
       <ng-container *ngIf="userType === 'Alumno'">
         <ion-card>
           <ion-card-header>
@@ -44,7 +35,7 @@
           </ion-card-header>
           <ion-card-content>
             <div class="grid grid-cols-2 gap-4">
-              <div *ngFor="let grade of studentGrades" class="bg-gray-100 p-4 rounded-lg">
+              <div *ngFor="let grade of studentGrades" class="bg-gray-100 p-4 rounded-lg shadow-md">
                 <h3 class="font-semibold">{{ grade.subject }}</h3>
                 <p class="text-2xl font-bold" [ngClass]="{
                   'text-green-600': grade.grade >= 90,
@@ -73,7 +64,7 @@
                   <h2>{{ pending.student }}</h2>
                   <p>{{ pending.subject }}</p>
                 </ion-label>
-                <ion-button slot="end" fill="outline">Calificar</ion-button>
+                <ion-button slot="end" fill="solid" color="tertiary">Calificar</ion-button>
               </ion-item>
             </ion-list>
           </ion-card-content>
