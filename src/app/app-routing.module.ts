@@ -24,7 +24,11 @@ const routes: Routes = [
   {
     path: 'grados',
     loadChildren: () => import('./grados/grados.module').then(m => m.GradosPageModule)
+  },  {
+    path: 'notas',
+    loadChildren: () => import('./notas/notas.module').then( m => m.NotasPageModule)
   },
+
 ];
 
 @NgModule({

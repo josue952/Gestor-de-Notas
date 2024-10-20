@@ -1,0 +1,14 @@
+.notas-container {
+  display: flex;
+  flex-direction: row;
+}
+
+app-sidebar {
+  flex-shrink: 0; /* Sidebar tiene un tamaño fijo */
+}
+
+.notas-content {
+  flex-grow: 1; /* El contenido ocupará todo el espacio restante */
+  padding: 20px;
+  background-color: #3532325d; /* Color de fondo para el contenido del Dashboard */
+}
