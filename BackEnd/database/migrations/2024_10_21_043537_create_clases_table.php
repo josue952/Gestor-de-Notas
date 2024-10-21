@@ -4,12 +4,10 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateClasesTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -17,17 +15,22 @@ class CreateClasesTable extends Migration
             $table->id('id_clase');
             $table->string('nombre', 100);
             $table->text('descripcion')->nullable();
+            $table->unsignedBigInteger('maestro_id')->nullable();
             $table->timestamps();
+
+            // Definimos la llave foránea
+            $table->foreign('maestro_id')
+                ->references('id_usuario')
+                ->on('users')
+                ->onDelete('set null');
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('clases');
     }
-}
+};
