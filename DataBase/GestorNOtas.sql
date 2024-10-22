@@ -13,11 +13,18 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabla Clases
+-- Tabla Grados
+CREATE TABLE Grados (
+    id_grado INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    descripcion TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
+-- Tabla Clases
 CREATE TABLE Clases (
     id_clase INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
     descripcion TEXT,
     maestro_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -27,18 +34,10 @@ CREATE TABLE Clases (
 -- Tabla Materias
 CREATE TABLE Materias (
     id_materia INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
     clase_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (clase_id) REFERENCES Clases(id_clase) ON DELETE CASCADE
-);
-
--- Tabla Grados
-CREATE TABLE Grados (
-    id_grado INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    descripcion TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Tabla Estudiantes
