@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClasesController;
 use App\Http\Controllers\MateriasController;
+use App\Http\Controllers\GradosController;
 
 // Rutas de autenticación
 Route::post('/login', [AuthController::class, 'login']);
@@ -35,4 +36,13 @@ Route::group(['prefix' => 'materias'], function () {
     Route::get('/{id}', [MateriasController::class, 'get_materia']); // Obtener materia por ID
     Route::put('/{id}', [MateriasController::class, 'update_materia']); // Actualizar materia
     Route::delete('/{id}', [MateriasController::class, 'delete_materia']); // Eliminar materia
+});
+
+// Rutas de grados
+Route::group(['prefix' => 'grados'], function () {
+    Route::post('/', [GradosController::class, 'create_grado']); // Crear grado
+    Route::get('/', [GradosController::class, 'get_grados']); // Obtener todos los grados
+    Route::get('/{id}', [GradosController::class, 'get_grado']); // Obtener grado por ID
+    Route::put('/{id}', [GradosController::class, 'update_grado']); // Actualizar grado
+    Route::delete('/{id}', [GradosController::class, 'delete_grado']); // Eliminar grado
 });
