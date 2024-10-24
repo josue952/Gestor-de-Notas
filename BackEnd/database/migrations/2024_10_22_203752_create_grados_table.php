@@ -14,6 +14,46 @@ class CreateGradosTable extends Migration
             $table->text('descripcion')->nullable();
             $table->timestamps();
         });
+
+        // Insertar valores predeterminados
+        DB::table('grados')->insert([
+            [
+                'nombre' => 'Primero',
+                'descripcion' => 'Primer grado de educación básica',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nombre' => 'Segundo',
+                'descripcion' => 'Segundo grado de educación básica',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nombre' => 'Tercero',
+                'descripcion' => 'Tercer grado de educación básica',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nombre' => 'Cuarto',
+                'descripcion' => 'Cuarto grado de educación básica',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nombre' => 'Quinto',
+                'descripcion' => 'Quinto grado de educación básica',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nombre' => 'Sexto',
+                'descripcion' => 'Sexto grado de educación básica',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
     }
 
     public function down()

@@ -24,6 +24,34 @@ return new class extends Migration
             // Llave foránea con la tabla Grados (grado de la clase)
             $table->foreign('grado_id')->references('id_grado')->on('grados')->onDelete('CASCADE');
         });
+
+        // Insertar valores predeterminados
+        DB::table('clases')->insert([
+            [
+                'nombre' => 'Matemáticas',
+                'descripcion' => 'Clase de matemáticas',
+                'maestro_id' => 2, // Juan Pérez
+                'grado_id' => 1, // Primer grado
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nombre' => 'Lenguaje',
+                'descripcion' => 'Clase de lenguaje',
+                'maestro_id' => 2, // Juan Pérez
+                'grado_id' => 1, // Primer grado
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nombre' => 'Ciencias',
+                'descripcion' => 'Clase de ciencias',
+                'maestro_id' => 2, // Juan Pérez
+                'grado_id' => 1, // Primer grado
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        ]);
     }
 
     public function down()

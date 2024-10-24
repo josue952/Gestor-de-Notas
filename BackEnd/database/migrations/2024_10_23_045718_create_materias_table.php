@@ -23,6 +23,28 @@ return new class extends Migration
                 ->on('clases')
                 ->onDelete('cascade');
         });
+
+        // Insertar valores predeterminados
+        DB::table('materias')->insert([
+            [
+                'nombre' => 'Matemáticas',
+                'clase_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nombre' => 'Lenguaje',
+                'clase_id' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nombre' => 'Ciencias',
+                'clase_id' => 3,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        ]);
     }
 
     /**

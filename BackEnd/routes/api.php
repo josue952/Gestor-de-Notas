@@ -7,6 +7,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClasesController;
 use App\Http\Controllers\MateriasController;
 use App\Http\Controllers\GradosController;
+use App\Http\Controllers\EstudiantesController;
+use App\Http\Controllers\CalificacionesController;
 
 // Rutas de autenticación
 Route::post('/login', [AuthController::class, 'login']);
@@ -45,4 +47,22 @@ Route::group(['prefix' => 'grados'], function () {
     Route::get('/{id}', [GradosController::class, 'get_grado']); // Obtener grado por ID
     Route::put('/{id}', [GradosController::class, 'update_grado']); // Actualizar grado
     Route::delete('/{id}', [GradosController::class, 'delete_grado']); // Eliminar grado
+});
+
+// Rutas de estudiantes
+Route::group(['prefix' => 'estudiantes'], function () {
+    Route::post('/', [EstudiantesController::class, 'store']); // Crear estudiante
+    Route::get('/', [EstudiantesController::class, 'index']); // Obtener todos los estudiantes
+    Route::get('/{carnet_estudiante}', [EstudiantesController::class, 'show']); // Obtener estudiante por carnet
+    Route::put('/{carnet_estudiante}', [EstudiantesController::class, 'update']); // Actualizar estudiante por carnet
+    Route::delete('/{carnet_estudiante}', [EstudiantesController::class, 'destroy']); // Eliminar estudiante por carnet
+});
+
+// Rutas de calificaciones
+Route::group(['prefix' => 'calificaciones'], function () {
+    Route::post('/', [CalificacionesController::class, 'store']); // Crear una nueva calificación
+    Route::get('/', [CalificacionesController::class, 'index']); // Obtener todas las calificaciones
+    Route::get('/{id_calificacion}', [CalificacionesController::class, 'show']); // Obtener una calificación por su ID
+    Route::put('/{id_calificacion}', [CalificacionesController::class, 'update']); // Actualizar una calificación por su ID
+    Route::delete('/{id_calificacion}', [CalificacionesController::class, 'destroy']); // Eliminar una calificación por su ID
 });
