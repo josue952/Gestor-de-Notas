@@ -9,6 +9,7 @@ use App\Http\Controllers\MateriasController;
 use App\Http\Controllers\GradosController;
 use App\Http\Controllers\EstudiantesController;
 use App\Http\Controllers\CalificacionesController;
+use App\Http\Controllers\SubNotasController;
 
 // Rutas de autenticación
 Route::post('/login', [AuthController::class, 'login']);
@@ -61,8 +62,14 @@ Route::group(['prefix' => 'estudiantes'], function () {
 // Rutas de calificaciones
 Route::group(['prefix' => 'calificaciones'], function () {
     Route::post('/', [CalificacionesController::class, 'store']); // Crear una nueva calificación
-    Route::get('/', [CalificacionesController::class, 'index']); // Obtener todas las calificaciones
     Route::get('/{id_calificacion}', [CalificacionesController::class, 'show']); // Obtener una calificación por su ID
     Route::put('/{id_calificacion}', [CalificacionesController::class, 'update']); // Actualizar una calificación por su ID
     Route::delete('/{id_calificacion}', [CalificacionesController::class, 'destroy']); // Eliminar una calificación por su ID
+});
+
+Route::group(['prefix' => 'calificaciones/{calificacion_id}/subnotas'], function () {
+    Route::post('/', [SubNotasController::class, 'store']); // Crear o actualizar subnotas
+    Route::get('/', [SubNotasController::class, 'index']); // Obtener todas las subnotas de una calificación
+    Route::get('/{id_subnota}', [SubNotasController::class, 'show']); // Obtener una subnota por su ID
+    Route::delete('/{id_subnota}', [SubNotasController::class, 'destroy']); // Eliminar una subnota por su ID
 });
