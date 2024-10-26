@@ -14,33 +14,27 @@ return new class extends Migration
         Schema::create('materias', function (Blueprint $table) {
             $table->id('id_materia');
             $table->string('nombre', 100)->unique();
-            $table->unsignedBigInteger('clase_id');
+            $table->text('objetivo'); // Agregar columna 'objetivo'
             $table->timestamps();
-
-            // Clave foránea que hace referencia a la tabla 'clases'
-            $table->foreign('clase_id')
-                ->references('id_clase')
-                ->on('clases')
-                ->onDelete('cascade');
         });
 
         // Insertar valores predeterminados
         DB::table('materias')->insert([
             [
                 'nombre' => 'Matemáticas',
-                'clase_id' => 1,
+                'objetivo' => 'Desarrollar habilidades analíticas y de resolución de problemas.',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'nombre' => 'Lenguaje',
-                'clase_id' => 2,
+                'objetivo' => 'Mejorar las habilidades de comunicación y expresión escrita y oral.',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'nombre' => 'Ciencias',
-                'clase_id' => 3,
+                'objetivo' => 'Fomentar el conocimiento científico y la curiosidad sobre el mundo natural.',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]

@@ -12,19 +12,25 @@ class MateriasController extends Controller
     // Crear una nueva materia
     public function create_materia(Request $request)
     {
-        // Validación de los datos del formulario
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string|max:100|unique:materias',
-            'clase_id' => 'required|exists:clases,id_clase',
+            'objetivo' => 'required|string|max:255',
         ]);
 
+        // Validar si ya existe una materia con el mismo nombre
+        $materia_existente = Materias::where('nombre', $request->nombre)->first();
+        if ($materia_existente) {
+            return response()->json(['message' => 'Ya existe una materia con el mismo nombre'], 400);
+        }
+        
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 400);
         }
 
+
         $materia = Materias::create([
             'nombre' => $request->nombre,
-            'clase_id' => $request->clase_id,
+            'objetivo' => $request->objetivo,
         ]);
 
         return response()->json([
@@ -60,16 +66,25 @@ class MateriasController extends Controller
 
         $validator = Validator::make($request->all(), [
             'nombre' => 'string|max:100|unique:materias,nombre,' . $materia->id_materia . ',id_materia',
-            'clase_id' => 'exists:clases,id_clase',
+            'objetivo' => 'string|max:255',
         ]);
+
+        // Validar si ya existe una materia con el mismo nombre
+        $materia_existente = Materias::where('nombre', $request->nombre)->first();
+        if ($materia_existente && $materia_existente->id_materia != $materia->id_materia) {
+            return response()->json(['message' => 'Ya existe una materia con el mismo nombre'], 400);
+        }
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 400);
         }
 
-        $materia->update($request->only(['nombre', 'clase_id']));
+        $materia->update($request->only(['nombre', 'objetivo']));
 
-        return response()->json(['message' => 'Materia actualizada exitosamente', 'materia' => $materia]);
+        return response()->json([
+            'message' => 'Materia actualizada exitosamente',
+            'materia' => $materia
+        ]);
     }
 
     // Eliminar una materia

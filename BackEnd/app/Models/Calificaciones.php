@@ -17,7 +17,6 @@ class Calificaciones extends Model
         'clase_id', 
         'materia_id', 
         'maestro_id', 
-        'registros', 
         'nota_final', 
         'fecha_asignacion'
     ];

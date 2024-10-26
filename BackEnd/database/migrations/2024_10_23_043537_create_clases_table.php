@@ -28,29 +28,38 @@ return new class extends Migration
         // Insertar valores predeterminados
         DB::table('clases')->insert([
             [
-                'nombre' => 'Matemáticas',
-                'descripcion' => 'Clase de matemáticas',
+                'nombre' => 'Matematica A',
+                'descripcion' => 'Clase de matemáticas de la sección A',
                 'maestro_id' => 2, // Juan Pérez
                 'grado_id' => 1, // Primer grado
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'nombre' => 'Lenguaje',
-                'descripcion' => 'Clase de lenguaje',
+                'nombre' => 'Matematica B',
+                'descripcion' => 'Clase de matemáticas de la sección B',
                 'maestro_id' => 2, // Juan Pérez
                 'grado_id' => 1, // Primer grado
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'nombre' => 'Ciencias',
-                'descripcion' => 'Clase de ciencias',
+                'nombre' => 'Lenguaje A', 
+                'descripcion' => 'Clase de Lenguaje de la sección A',
                 'maestro_id' => 2, // Juan Pérez
                 'grado_id' => 1, // Primer grado
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
+            [
+                'nombre' => 'Lenguaje B',
+                'descripcion' => 'Clase de Lenguaje de la sección B',
+                'maestro_id' => 2, // Juan Pérez
+                'grado_id' => 1, // Primer grado
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            
         ]);
     }
 

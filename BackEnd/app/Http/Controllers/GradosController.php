@@ -15,6 +15,7 @@ class GradosController extends Controller
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string|max:100|unique:grados',
             'descripcion' => 'nullable|string',
+            'registros' => 'required|integer|min:0', // Validación para el campo 'registros'
         ]);
 
         if ($validator->fails()) {
@@ -24,6 +25,7 @@ class GradosController extends Controller
         $grado = Grados::create([
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
+            'registros' => $request->registros,
         ]);
 
         return response()->json([
@@ -60,13 +62,14 @@ class GradosController extends Controller
         $validator = Validator::make($request->all(), [
             'nombre' => 'string|max:100|unique:grados,nombre,' . $grado->id_grado . ',id_grado',
             'descripcion' => 'nullable|string',
+            'registros' => 'integer|min:0', // Validación para el campo 'registros'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 400);
         }
 
-        $grado->update($request->only(['nombre', 'descripcion']));
+        $grado->update($request->only(['nombre', 'descripcion', 'registros']));
 
         return response()->json(['message' => 'Grado actualizado exitosamente', 'grado' => $grado]);
     }

@@ -19,5 +19,6 @@ class Grados extends Model
     protected $fillable = [
         'nombre',
         'descripcion',
+        'registros'
     ];
 }

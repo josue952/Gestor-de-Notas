@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('sub_notas', function (Blueprint $table) {
@@ -17,14 +14,10 @@ return new class extends Migration
             $table->decimal('subnota', 5, 2);
             $table->timestamps();
 
-            // Foreign key
             $table->foreign('calificacion_id')->references('id_calificacion')->on('calificaciones')->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('sub_notas');

@@ -9,7 +9,6 @@ use Validator;
 
 class CalificacionesController extends Controller
 {
-
     // Crear una nueva calificación
     public function store(Request $request)
     {
@@ -19,8 +18,7 @@ class CalificacionesController extends Controller
             'clase_id' => 'required|exists:clases,id_clase',
             'materia_id' => 'required|exists:materias,id_materia',
             'maestro_id' => 'required|exists:users,id_usuario',
-            'registros' => 'required|numeric|min:3|max:5',
-            'nota_final' => 'required|numeric|min:0|max:10',
+            'nota_final' => 'nullable|numeric|min:0|max:10', // Cambiar a nullable
             'fecha_asignacion' => 'required|date',
         ]);
 
@@ -56,8 +54,7 @@ class CalificacionesController extends Controller
             'clase_id' => $request->clase_id,
             'materia_id' => $request->materia_id,
             'maestro_id' => $request->maestro_id,
-            'registros' => $request->registros,
-            'nota_final' => $request->nota_final,
+            'nota_final' => $request->nota_final ?? 0, // Si no se proporciona, usa el valor predeterminado 0
             'fecha_asignacion' => $request->fecha_asignacion,
         ]);
 
@@ -71,7 +68,6 @@ class CalificacionesController extends Controller
     public function show($id_calificacion)
     {
         $calificacion = Calificaciones::findOrFail($id_calificacion);
-
         return response()->json($calificacion);
     }
 
@@ -85,8 +81,7 @@ class CalificacionesController extends Controller
             'clase_id' => 'required|exists:clases,id_clase',
             'materia_id' => 'required|exists:materias,id_materia',
             'maestro_id' => 'required|exists:users,id_usuario',
-            'registros' => 'required|numeric|min:3|max:5',
-            'nota_final' => 'required|numeric|min:0|max:10',//La calificacion final se calculara en la tabla SubirCalificaciones, por el momento se dejara asi
+            'nota_final' => 'nullable|numeric|min:0|max:10', // Cambiar a nullable
             'fecha_asignacion' => 'required|date',
         ]);
 
@@ -102,12 +97,11 @@ class CalificacionesController extends Controller
             ], 400);
         }
 
-        // Verificar si ya existe una calificación para el estudiante en la misma clase y materia,
-        // pero excluyendo la calificación actual que se está actualizando
+        // Verificar si ya existe una calificación para el estudiante en la misma clase y materia, excluyendo la actual
         $existingCalificacion = Calificaciones::where('estudiante_id', $request->estudiante_id)
             ->where('clase_id', $request->clase_id)
             ->where('materia_id', $request->materia_id)
-            ->where('id_calificacion', '!=', $id_calificacion) // Excluir la calificación actual
+            ->where('id_calificacion', '!=', $id_calificacion)
             ->first();
 
         if ($existingCalificacion) {
@@ -122,14 +116,12 @@ class CalificacionesController extends Controller
             'clase_id' => $request->clase_id,
             'materia_id' => $request->materia_id,
             'maestro_id' => $request->maestro_id,
-            'registros' => $request->registros,
-            'nota_final' => $request->nota_final,//La calificacion final se calculara en la tabla SubirCalificaciones, por el momento se dejara asi
+            'nota_final' => $request->nota_final ?? $calificacion->nota_final, // Usar valor actual si no se proporciona
             'fecha_asignacion' => $request->fecha_asignacion
         ]);
 
         return response()->json(['message' => 'Calificación actualizada correctamente.'], 200);
     }
-
 
     // Eliminar una calificación
     public function destroy($id_calificacion)

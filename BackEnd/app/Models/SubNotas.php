@@ -10,6 +10,7 @@ class SubNotas extends Model
     use HasFactory;
 
     protected $table = 'sub_notas';
+    protected $primaryKey = 'id_subnota'; // Especifica la clave primaria correcta
 
     protected $fillable = [
         'calificacion_id',

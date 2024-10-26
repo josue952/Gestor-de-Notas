@@ -67,9 +67,12 @@ Route::group(['prefix' => 'calificaciones'], function () {
     Route::delete('/{id_calificacion}', [CalificacionesController::class, 'destroy']); // Eliminar una calificación por su ID
 });
 
+// Rutas de subnotas
 Route::group(['prefix' => 'calificaciones/{calificacion_id}/subnotas'], function () {
-    Route::post('/', [SubNotasController::class, 'store']); // Crear o actualizar subnotas
-    Route::get('/', [SubNotasController::class, 'index']); // Obtener todas las subnotas de una calificación
-    Route::get('/{id_subnota}', [SubNotasController::class, 'show']); // Obtener una subnota por su ID
-    Route::delete('/{id_subnota}', [SubNotasController::class, 'destroy']); // Eliminar una subnota por su ID
+    Route::post('/', [SubNotasController::class, 'store']); // Crear subnotas
+    Route::get('/', [SubNotasController::class, 'show']); // Obtener todas las subnotas de una calificación
+    Route::put('/', [SubNotasController::class, 'update']); // Actualizar subnotas
+    Route::delete('/', [SubNotasController::class, 'destroy']); // Eliminar todas las subnotas de una calificación
+    Route::delete('/{id_subnota}', [SubNotasController::class, 'deleteSubNota']); // Eliminar una subnota específica
 });
+
