@@ -14,16 +14,71 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">notas</ion-title>
-    </ion-toolbar>
-  </ion-header>
-  
   <div class="notas-container">
     <app-sidebar></app-sidebar>
     <div class="notas-content">
-      <h3>Hola mundo</h3>
+      <ion-buttons slot="end">
+        <ion-button (click)="abrirModal()">
+          <ion-icon name="add"></ion-icon>
+          Agregar
+        </ion-button>
+      </ion-buttons>  
+      <ion-list>
+        <ion-item *ngFor="let calificacion of calificaciones">
+          <ion-label>
+            <h2>Estudiante ID: {{ calificacion.estudiante_id }}</h2>
+            <p>Clase: {{ calificacion.clase?.nombre }}</p> <!-- Acceso a clase.nombre -->
+            <p>Materia: {{ calificacion.materia?.nombre }}</p> <!-- Acceso a materia.nombre -->
+            <p>Nota Final: {{ calificacion.nota_final }}</p>
+            <p>Fecha: {{ calificacion.fecha_asignacion | date:'shortDate' }}</p>
+          </ion-label>
+          <ion-button slot="end" (click)="abrirModal(calificacion)">Editar</ion-button>
+          <ion-button slot="end" color="danger" (click)="eliminarCalificacion(calificacion.id_calificacion)">Eliminar</ion-button>
+        </ion-item>
+      </ion-list>
+
+      <!-- Modal editar -->
+      <ion-modal [isOpen]="modalAbierto" (ionModalDidDismiss)="cerrarModal()">
+        <ng-template>
+          <ion-header>
+            <ion-toolbar>
+              <ion-title>{{ calificacionActual.id_calificacion ? 'Editar' : 'Agregar' }} Calificación</ion-title>
+              <ion-buttons slot="end">
+                <ion-button (click)="cerrarModal()">Cancelar</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+      
+          <ion-content class="ion-padding">
+            <ion-item>
+              <ion-label position="floating">Estudiante ID</ion-label>
+              <ion-input type="number" [(ngModel)]="calificacionActual.estudiante_id"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating">Clase ID</ion-label>
+              <ion-input type="number" [(ngModel)]="calificacionActual.clase_id"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating">Materia ID</ion-label>
+              <ion-input type="number" [(ngModel)]="calificacionActual.materia_id"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating">Maestro ID</ion-label>
+              <ion-input type="number" [(ngModel)]="calificacionActual.maestro_id"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating">Nota Final</ion-label>
+              <ion-input type="number" [(ngModel)]="calificacionActual.nota_final"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating">Fecha Asignación</ion-label>
+              <ion-datetime displayFormat="DD/MM/YYYY" [(ngModel)]="calificacionActual.fecha_asignacion"></ion-datetime>
+            </ion-item>
+      
+            <ion-button expand="block" (click)="guardarCalificacion()">Guardar</ion-button>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
     </div>
   </div>
 </ion-content>

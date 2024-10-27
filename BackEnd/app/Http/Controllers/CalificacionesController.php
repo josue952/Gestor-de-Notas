@@ -64,11 +64,25 @@ class CalificacionesController extends Controller
         ], 201);
     }
 
+    // Obtener todas las calificaciones de un alumno por ID de estudiante
+    public function obtenerCalificacionesPorEstudiante($estudiante_id)
+    {
+        // Obtener todas las calificaciones del estudiante, y devolvera tambien el nombre de la clase y materia
+        $calificaciones = Calificaciones::where('estudiante_id', $estudiante_id)
+            ->with(['clase:id_clase,nombre', 'materia:id_materia,nombre']) // Incluir nombre de clase y materia
+            ->get();
+
+        return response()->json($calificaciones);
+    }
+
     // Obtener una calificación por ID
     public function show($id_calificacion)
-    {
-        $calificacion = Calificaciones::findOrFail($id_calificacion);
-        return response()->json($calificacion);
+    {   
+        // Obtener la calificación por ID, y devolvera tambien el nombre de la clase y materia
+        $calificacion = Calificaciones::with(['clase:id_clase,nombre', 'materia:id_materia,nombre']) // Incluir nombre de clase y materia
+            ->findOrFail($id_calificacion);
+
+        return response()->json([$calificacion]);
     }
 
     // Actualizar una calificación
