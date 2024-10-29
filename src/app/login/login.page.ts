@@ -37,8 +37,9 @@ export class LoginPage implements OnInit {
         .then(async (response: any) => {
           console.log('Login exitoso', response);
   
-          // Guardamos el token en el localStorage
+          // Guardamos el token y el correo en el localStorage
           localStorage.setItem('auth_token', response.token);
+          localStorage.setItem('email', email); // Guardar el correo en localStorage
   
           // Redirigir al dashboard
           this.router.navigate(['/dashboard']);
