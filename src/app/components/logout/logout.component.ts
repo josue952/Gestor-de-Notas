@@ -1,32 +1,49 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
-import { Router } from '@angular/router'; // Importa Router
+import { Router } from '@angular/router';
+import { UsersService } from '../../services/users.service';
 
 @Component({
   selector: 'app-logout',
   templateUrl: './logout.component.html',
   styleUrls: ['./logout.component.scss'],
 })
-export class LogoutComponent {
-  userName: string = 'Nombre del Usuario'; // Asigna el nombre del usuario aquí
-  userEmail: string = 'usuario@ejemplo.com'; // Asigna el email del usuario aquí
+export class LogoutComponent implements OnInit {
+  userName: string | null = null; // Variable para almacenar el nombre del usuario
+  userEmail = localStorage.getItem('email'); // Obtener el correo del usuario de localStorage
 
   constructor(
     private alertController: AlertController,
-    private router: Router // Inyecta el Router
+    private router: Router,
+    private usersService: UsersService // Inyectar el servicio UsersService
   ) {}
+
+  ngOnInit() {
+    this.getUserName();
+  }
+
+  async getUserName() {
+    if (this.userEmail) {
+      try {
+        const user = await this.usersService.getUser(this.userEmail); // Llama al servicio con el correo
+        this.userName = user.nombre; // Asigna el nombre del usuario
+      } catch (error) {
+        console.error('Error al obtener el nombre del usuario:', error);
+      }
+    }
+  }
 
   async presentAlert() {
     const alert = await this.alertController.create({
       header: 'Confirmar Cierre de Sesión',
-      message: '¿Estás seguro de que deseas cerrar sesión?',
+      message: `¿Estás seguro de que deseas cerrar sesión, ${this.userName}?`,
       cssClass: 'alert',
       buttons: [
         {
           text: 'Cancelar',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: (blah) => {
+          handler: () => {
             console.log('Cancelado');
           },
         },
@@ -38,14 +55,12 @@ export class LogoutComponent {
         },
       ],
     });
-  
+
     await alert.present();
   }
 
   logout() {
-    //remover el auth_token del localStorage
-    localStorage.removeItem('auth_token');
-    
-    this.router.navigate(['/login']); // Reemplaza '/login' con la ruta correcta a tu página de login
+    localStorage.removeItem('auth_token'); // Remover el auth_token de localStorage
+    this.router.navigate(['/login']); // Redirigir a la página de login
   }
 }

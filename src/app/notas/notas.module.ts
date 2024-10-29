@@ -2,19 +2,18 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { GradosPage } from './grados.page'; // Asegúrate de que esta ruta sea correcta
-import { GradosRoutingModule } from './grados-routing.module'; // Importa el módulo de enrutamiento
+import { NotasPageRoutingModule } from './notas-routing.module';
+import { NotasPage } from './notas.page';
 import { SharedModule } from '../shared/shared.module';
-
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    GradosRoutingModule,
+    NotasPageRoutingModule,
     SharedModule
   ],
-  declarations: [GradosPage]
+  declarations: [NotasPage]
 })
-export class GradosPageModule {}
+export class NotasPageModule {}

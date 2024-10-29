@@ -7,7 +7,7 @@ import { MenuController } from '@ionic/angular';
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent {
-  isCollapsed = false;
+  isCollapsed = true;
 
   toggleSidebar() {
     this.isCollapsed = !this.isCollapsed;
