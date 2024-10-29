@@ -1,14 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
 import { IonicModule } from '@ionic/angular';
-
 import { DashboardPageRoutingModule } from './dashboard-routing.module';
 import { DashboardPage } from './dashboard.page';
-import { SidebarComponent } from '../components/sidebar/sidebar.component';
-import { LogoutComponent } from '../components/logout/logout.component';
-
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   imports: [
@@ -16,8 +12,9 @@ import { LogoutComponent } from '../components/logout/logout.component';
     FormsModule,
     IonicModule,
     DashboardPageRoutingModule,
+    SharedModule
     
   ],
-  declarations: [DashboardPage, SidebarComponent, LogoutComponent]
+  declarations: [DashboardPage]
 })
 export class DashboardPageModule {}

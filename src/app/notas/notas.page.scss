@@ -1,4 +1,4 @@
-.grados-container {
+.notas-container {
   display: flex;
   flex-direction: row;
 }
@@ -7,24 +7,8 @@ app-sidebar {
   flex-shrink: 0; /* Sidebar tiene un tamaño fijo */
 }
 
-.grados-content {
+.notas-content {
   flex-grow: 1; /* El contenido ocupará todo el espacio restante */
   padding: 20px;
   background-color: #3532325d; /* Color de fondo para el contenido del Dashboard */
-}
-
-ion-item {
-  margin-bottom: 15px; /* Espaciado entre items */
-}
-
-.editar-formulario {
-  padding: 20px;
-  ion-item {
-    margin-bottom: 15px;
-  }
-}
-
-.btn-agregar{
-    width: 50%;
-    margin: 0 auto;
 }

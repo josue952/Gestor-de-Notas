@@ -1,56 +1,125 @@
-<ion-header>
+<ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Materias</ion-title>
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <ion-col size="10">
+          <ion-title>Materias</ion-title>
+        </ion-col>
+        <ion-col size="2" class="ion-text-right">
+          <app-logout></app-logout>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <form (submit)="agregarMateria()">
-    <ion-item>
-      <ion-label position="floating">Nombre</ion-label>
-      <ion-input [(ngModel)]="nombre" name="nombre" required></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating">Descripción</ion-label>
-      <ion-input [(ngModel)]="descripcion" name="descripcion" required></ion-input>
-    </ion-item>
-    <ion-button expand="full" type="submit">
-      {{ editando ? 'Actualizar Materia' : 'Agregar Materia' }}
-    </ion-button>
-  </form>
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Materias</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <div class="materias-container">
+    <!-- Sidebar -->
+    <app-sidebar></app-sidebar>
+    
+    <!-- Contenido de las materias -->
+    <div class="materias-content">
+      <form (ngSubmit)="editando ? agregarMateria() : agregarMateria()" #materiaForm="ngForm" class="materia-form">
+        <ion-item>
+          <ion-label position="floating">Nombre</ion-label>
+          <ion-input 
+            [(ngModel)]="nombre" 
+            name="nombre" 
+            required 
+            placeholder="Ingrese el nombre de la materia">
+          </ion-input>
+        </ion-item>
+        
+        <ion-item>
+          <ion-label position="floating">Descripción</ion-label>
+          <ion-input 
+            [(ngModel)]="descripcion" 
+            name="descripcion" 
+            required 
+            placeholder="Ingrese la descripción de la materia">
+          </ion-input>
+        </ion-item>
 
-  <ion-list>
-    <ion-item *ngFor="let materia of materias; let i = index">
-      <ion-label>
-        <h2>{{ materia.nombre }}</h2>
-        <p>{{ materia.descripcion }}</p>
-      </ion-label>
+        <ion-button 
+          class="btn-agregar"
+          type="submit" 
+          expand="full" 
+          color="success">
+          {{ editando ? 'Actualizar' : 'Agregar' }}
+        </ion-button>
+      </form>
 
-      <!-- Contenedor para los botones y el formulario de edición -->
-      <div style="display: flex; align-items: center; margin-left: auto; margin-right: 0;">
-        <ion-button (click)="editarMateria(materia, i)" color="primary">Editar</ion-button>
-        <ion-button (click)="eliminarMateria(i)" color="danger">Eliminar</ion-button>
-
-        <!-- Formulario de edición que se muestra al lado del botón de editar -->
-        <div *ngIf="editando && materiaEditando === i" style="margin-left: 16px;">
-          <form (submit)="actualizarMateria()">
-            <ion-item>
-              <ion-label position="floating">Nombre</ion-label>
-              <ion-input [(ngModel)]="nombre" name="nombre" required></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-label position="floating">Descripción</ion-label>
-              <ion-input [(ngModel)]="descripcion" name="descripcion" required></ion-input>
-            </ion-item>
-            <ion-button expand="full" type="submit">
-              Actualizar
+      <ion-list>
+        <ion-item *ngFor="let materia of materias; let i = index" class="materia-item">
+          <ion-label>
+            <h2 class="materia-title">{{ materia.nombre }}</h2>
+            <p class="materia-description">{{ materia.descripcion }}</p>
+          </ion-label>
+          
+          <ion-buttons slot="end">
+            <ion-button 
+              color="secondary" 
+              fill="outline" 
+              (click)="abrirModalEdicion(materia, i)">
+              Editar
             </ion-button>
-            <ion-button expand="full" color="light" (click)="cancelarEdicion()">
-              Cancelar
+            <ion-button 
+              color="danger" 
+              fill="outline" 
+              (click)="eliminarMateria(i)">
+              Eliminar
             </ion-button>
-          </form>
-        </div>
-      </div>
-    </ion-item>
-  </ion-list>
+          </ion-buttons>
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+
+  <!-- Modal de edición -->
+  <ion-modal [isOpen]="editando" (didDismiss)="cancelarEdicion()"> 
+    <!--ng-template permite renderizar lo que este dentro de en, en este caso en un modal-->
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Editar Materia</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cancelarEdicion()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+    
+      <ion-content class="ion-padding">
+        <form (ngSubmit)="agregarMateria()" #editarForm="ngForm" class="editar-formulario">
+          <ion-item>
+            <ion-label position="floating">Editar Nombre</ion-label>
+            <ion-input 
+              [(ngModel)]="nombre" 
+              name="nombreEditar" 
+              required 
+              placeholder="Ingrese el nombre de la materia">
+            </ion-input>
+          </ion-item>
+          
+          <ion-item>
+            <ion-label position="floating">Editar Descripción</ion-label>
+            <ion-input 
+              [(ngModel)]="descripcion" 
+              name="descripcionEditar" 
+              required 
+              placeholder="Ingrese la descripción de la materia">
+            </ion-input>
+          </ion-item>
+    
+          <ion-button type="submit" expand="full" color="success">Guardar Cambios</ion-button>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>
