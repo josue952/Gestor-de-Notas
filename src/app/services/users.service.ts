@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 @Injectable({
   providedIn: 'root'
@@ -10,14 +10,23 @@ export class UsersService {
 
   constructor() {}
 
-  // Crear usuario
+  // Crear usuario con manejo específico de errores de validación
   async createUser(userData: any) {
     try {
       const response = await axios.post(this.apiUrl, userData);
       return response.data;
     } catch (error) {
-      console.error('Error al crear usuario:', error);
-      throw error;
+      // Usar 'as AxiosError' para especificar el tipo de error
+      const axiosError = error as AxiosError;
+      if (axiosError.response && axiosError.response.status === 400) {
+        // Captura los errores de validación específicos
+        const validationErrors = axiosError.response.data;
+        console.error('Errores de validación:', validationErrors);
+        throw validationErrors; // Lanza los errores para que puedan manejarse en el componente
+      } else {
+        console.error('Error desconocido al crear usuario:', error);
+        throw new Error('Error desconocido, por favor intente nuevamente más tarde.');
+      }
     }
   }
 
@@ -49,8 +58,17 @@ export class UsersService {
       const response = await axios.put(`${this.apiUrl}/${id}`, updatedData);
       return response.data;
     } catch (error) {
-      console.error('Error al actualizar usuario:', error);
-      throw error;
+      // Usar 'as AxiosError' para especificar el tipo de error
+      const axiosError = error as AxiosError;
+      if (axiosError.response && axiosError.response.status === 400) {
+        // Captura los errores de validación específicos
+        const validationErrors = axiosError.response.data;
+        console.error('Errores de validación:', validationErrors);
+        throw validationErrors; // Lanza los errores para que puedan manejarse en el componente
+      } else {
+        console.error('Error desconocido al editar usuario:', error);
+        throw new Error('Error desconocido, por favor intente nuevamente más tarde.');
+      }
     }
   }
 

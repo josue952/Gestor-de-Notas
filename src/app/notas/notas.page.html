@@ -37,7 +37,7 @@
         </ion-item>
       </ion-list>
 
-      <!-- Modal editar -->
+      <!-- Modal crear/editar -->
       <ion-modal [isOpen]="modalAbierto" (ionModalDidDismiss)="cerrarModal()">
         <ng-template>
           <ion-header>
@@ -68,7 +68,7 @@
             </ion-item>
             <ion-item>
               <ion-label position="floating">Nota Final</ion-label>
-              <ion-input type="number" [(ngModel)]="calificacionActual.nota_final"></ion-input>
+              <ion-input type="number" [(ngModel)]="calificacionActual.nota_final" disabled></ion-input>
             </ion-item>
             <ion-item>
               <ion-label position="floating">Fecha Asignación</ion-label>

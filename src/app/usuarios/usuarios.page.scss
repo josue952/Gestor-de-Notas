@@ -1,0 +1,38 @@
+.usuarios-container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh; /* Asegura que el contenedor ocupe toda la altura de la pantalla */
+}
+
+app-sidebar {
+    flex-shrink: 0;
+    /* Sidebar tiene un tamaño fijo */
+}
+
+.usuarios-content {
+    flex-grow: 1;
+    /* El contenido ocupará todo el espacio restante */
+    padding: 20px;
+    background-color: #3532325d; /* Color de fondo para el contenido del Dashboard */
+    height: 100%; /* Asegura que el contenido ocupe toda la altura disponible */
+}
+
+.navigation {
+    margin-bottom: 20px; /* Espaciado inferior para separar de la lista de usuarios */
+}
+
+/* Agregar este estilo para eliminar el espacio adicional en la parte inferior */
+ion-content {
+    --background: transparent; /* Evita el color de fondo predeterminado */
+    height: calc(100% - 56px); /* Ajusta la altura, considerando la altura del header */
+}
+
+.filter-container {
+    display: flex;
+    align-items: center; /* Centra verticalmente el select y el label */
+}
+
+.filter-container ion-select {
+    width: auto; /* Asegura que el select solo ocupe el espacio necesario */
+    margin-left: 15px; /* Espacio entre el select y el label */
+}

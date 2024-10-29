@@ -56,7 +56,7 @@ export class NotasPage implements OnInit {
 
   async cargarCalificaciones() {
     try {
-      this.calificaciones = await this.notasService.obtenerCalificacionPorId(3); // Este método debe devolver un array
+      this.calificaciones = await this.notasService.obtenerCalificacionPorId(2); // Este método debe devolver un array
       console.log('Calificaciones cargadas:', this.calificaciones);
     } catch (error) {
       console.error('Error al cargar calificaciones:', error);

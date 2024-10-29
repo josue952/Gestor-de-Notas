@@ -28,6 +28,10 @@ const routes: Routes = [
     path: 'notas',
     loadChildren: () => import('./notas/notas.module').then( m => m.NotasPageModule)
   },
+  {
+    path: 'usuarios',
+    loadChildren: () => import('./usuarios/usuarios.module').then( m => m.UsuariosPageModule)
+  },
 
 ];
 
