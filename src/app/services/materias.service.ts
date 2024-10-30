@@ -4,14 +4,14 @@ import axios, { AxiosError } from 'axios';
 @Injectable({
   providedIn: 'root'
 })
-export class ClasesService {
+export class MateriasService {
 
-  private apiUrl = 'http://localhost:8000/api/clases'; // Cambia la URL base según tu configuración
+  private apiUrl = 'http://localhost:8000/api/materias';
 
   constructor() {}
 
-  // Crear un clase con manejo específico de errores de validación
-  async createClase(userData: any) {
+  // Crear un materia con manejo específico de errores de validación
+  async createMateria(userData: any) {
     try {
       const response = await axios.post(this.apiUrl, userData);
       return response.data;
@@ -24,36 +24,36 @@ export class ClasesService {
         console.error('Errores de validación:', validationErrors);
         throw validationErrors; // Lanza los errores para que puedan manejarse en el componente
       } else {
-        console.error('Error desconocido al crear la clase:', error);
+        console.error('Error desconocido al crear la materia:', error);
         throw new Error('Error desconocido, por favor intente nuevamente más tarde.');
       }
     }
   }
 
-  // Obtener todos los clase
-  async getClases() {
+  // Obtener todas las maeerias
+  async getMaterias() {
     try {
       const response = await axios.get(this.apiUrl);
       return response.data;
     } catch (error) {
-      console.error('Error al obtener las clases:', error);
+      console.error('Error al obtener las materias:', error);
       throw error;
     }
   }
 
-  // Obtener un clase por ID
-  async getClase(id: number) {
+  // Obtener una materia por ID
+  async getMateria(id: number) {
     try {
       const response = await axios.get(`${this.apiUrl}/${id}`);
       return response.data;
     } catch (error) {
-      console.error('Error al obtener la clase:', error);
+      console.error('Error al obtener la materia:', error);
       throw error;
     }
   }
 
-  // Actualizar clase
-  async updateClase(id: number, updatedData: any) {
+  // Actualizar mateira
+  async updateMateria(id: number, updatedData: any) {
     try {
       const response = await axios.put(`${this.apiUrl}/${id}`, updatedData);
       return response.data;
@@ -66,19 +66,19 @@ export class ClasesService {
         console.error('Errores de validación:', validationErrors);
         throw validationErrors; // Lanza los errores para que puedan manejarse en el componente
       } else {
-        console.error('Error desconocido al editar la clase:', error);
+        console.error('Error desconocido al editar la materia:', error);
         throw new Error('Error desconocido, por favor intente nuevamente más tarde.');
       }
     }
   }
 
-  // Eliminar clase
-  async deleteClase(id: number) {
+  // Eliminar materia
+  async deleteMateria(id: number) {
     try {
       const response = await axios.delete(`${this.apiUrl}/${id}`);
       return response.data;
     } catch (error) {
-      console.error('Error al eliminar la clase:', error);
+      console.error('Error al eliminar la materia:', error);
       throw error;
     }
   }

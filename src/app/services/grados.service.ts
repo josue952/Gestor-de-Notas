@@ -41,7 +41,7 @@ export class GradosService {
     }
   }
 
-  // Obtener un usuario por ID o email
+  // Obtener un grado por ID
   async getGrado(id: number) {
     try {
       const response = await axios.get(`${this.apiUrl}/${id}`);
@@ -52,7 +52,7 @@ export class GradosService {
     }
   }
 
-  // Actualizar usuario
+  // Actualizar grado
   async updateGrado(id: number, updatedData: any) {
     try {
       const response = await axios.put(`${this.apiUrl}/${id}`, updatedData);
@@ -72,7 +72,7 @@ export class GradosService {
     }
   }
 
-  // Eliminar usuario
+  // Eliminar grado
   async deleteGrado(id: number) {
     try {
       const response = await axios.delete(`${this.apiUrl}/${id}`);
