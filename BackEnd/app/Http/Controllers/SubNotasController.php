@@ -11,55 +11,55 @@ class SubNotasController extends Controller
 {
     // Crear subnotas basado en el número de "registros" permitido por el grado
     public function store(Request $request, $calificacion_id)
-{
-    // Validar los datos de entrada
-    $request->validate([
-        'subnotas' => 'required|array', // Se espera un array de subnotas
-        'subnotas.*' => 'required|numeric|min:0|max:10', // Cada subnota debe ser un número entre 0 y 10
-    ]);
-
-    // Verificar si ya existen subnotas asociadas a esta calificación
-    $subnotasExistentes = SubNotas::where('calificacion_id', $calificacion_id)->exists();
-    if ($subnotasExistentes) {
-        return response()->json([
-            'error' => 'Ya existen subnotas asociadas a esta calificación. No se pueden crear subnotas adicionales.'
-        ], 400);
-    }
-
-    // Obtener la calificación y el grado asociado
-    $calificacion = Calificaciones::findOrFail($calificacion_id);
-    $grado = Grados::findOrFail($calificacion->clase->grado_id);
-
-    // Verificar que el número de subnotas no exceda el valor de "registros" en la tabla Grados
-    $numRegistrosPermitidos = (int) $grado->registros;
-    $numSubNotas = count($request->subnotas);
-
-    if ($numSubNotas > $numRegistrosPermitidos) {
-        return response()->json([
-            'error' => "Solo se permiten $numRegistrosPermitidos subnotas para este grado."
-        ], 400);
-    }
-
-    // Insertar las nuevas subnotas
-    foreach ($request->subnotas as $subnota) {
-        SubNotas::create([
-            'calificacion_id' => $calificacion_id,
-            'subnota' => $subnota,
+    {
+        // Validar los datos de entrada
+        $request->validate([
+            'subnotas' => 'required|array', // Se espera un array de subnotas
+            'subnotas.*' => 'required|numeric|min:0|max:10', // Cada subnota debe ser un número entre 0 y 10
         ]);
+
+        // Verificar si ya existen subnotas asociadas a esta calificación
+        $subnotasExistentes = SubNotas::where('calificacion_id', $calificacion_id)->exists();
+        if ($subnotasExistentes) {
+            return response()->json([
+                'error' => 'Ya existen subnotas asociadas a esta calificación. No se pueden crear subnotas adicionales.'
+            ], 400);
+        }
+
+        // Obtener la calificación y el grado asociado
+        $calificacion = Calificaciones::findOrFail($calificacion_id);
+        $grado = Grados::findOrFail($calificacion->clase->grado_id);
+
+        // Verificar que el número de subnotas no exceda el valor de "registros" en la tabla Grados
+        $numRegistrosPermitidos = (int) $grado->registros;
+        $numSubNotas = count($request->subnotas);
+
+        if ($numSubNotas > $numRegistrosPermitidos) {
+            return response()->json([
+                'error' => "Solo se permiten $numRegistrosPermitidos subnotas para este grado."
+            ], 400);
+        }
+
+        // Insertar las nuevas subnotas
+        foreach ($request->subnotas as $subnota) {
+            SubNotas::create([
+                'calificacion_id' => $calificacion_id,
+                'subnota' => $subnota,
+            ]);
+        }
+
+        // Calcular la nueva nota final
+        $notaFinal = array_sum($request->subnotas) / $numSubNotas;
+
+        // Actualizar la nota final en la tabla calificaciones
+        $calificacion->nota_final = $notaFinal;
+        $calificacion->save();
+
+        return response()->json([
+            'message' => 'Subnotas y nota final actualizadas correctamente.',
+            'nota_final' => $notaFinal,
+        ], 200);
     }
-
-    // Calcular la nueva nota final
-    $notaFinal = array_sum($request->subnotas) / $numSubNotas;
-
-    // Actualizar la nota final en la tabla calificaciones
-    $calificacion->nota_final = $notaFinal;
-    $calificacion->save();
-
-    return response()->json([
-        'message' => 'Subnotas y nota final actualizadas correctamente.',
-        'nota_final' => $notaFinal,
-    ], 200);
-}
 
     // Obtener las subnotas de una calificación
     public function show($calificacion_id)

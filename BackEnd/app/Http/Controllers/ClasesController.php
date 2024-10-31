@@ -67,7 +67,7 @@ class ClasesController extends Controller
         $clases = Clases::with([
             'maestro' => function ($query) {
                 // Selecciona tanto el nombre como el apellido en una sola consulta
-                $query->select('id_usuario', 'nombre', 'apellido')
+                $query->select('id_usuario', 'nombre_completo')
                     ->where('rol', 'Maestro'); // Filtra solo maestros
             },
             'grado:id_grado,nombre' // Incluye solo los campos necesarios de grados
@@ -82,7 +82,7 @@ class ClasesController extends Controller
         $clase = Clases::with([
             'maestro' => function ($query) {
                 // Selecciona tanto el nombre como el apellido en una sola consulta
-                $query->select('id_usuario', 'nombre', 'apellido')
+                $query->select('id_usuario', 'nombre_completo')
                     ->where('rol', 'Maestro'); // Filtra solo maestros
             },
             'grado:id_grado,nombre' // Incluye solo los campos necesarios de grados

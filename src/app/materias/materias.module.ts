@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Asegúrate de importar FormsModule
+import { FormsModule } from '@angular/forms'; 
 import { IonicModule } from '@ionic/angular';
 import { MateriasPage } from './materias.page';
 import { RouterModule } from '@angular/router';
@@ -16,7 +16,7 @@ const routes = [
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule, // Asegúrate de que FormsModule esté importado
+    FormsModule, 
     IonicModule,
     RouterModule.forChild(routes),
     SharedModule

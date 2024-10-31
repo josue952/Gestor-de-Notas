@@ -7,8 +7,7 @@ import { GradosService } from '../services/grados.service';
 
 interface Maestro {
   id_usuario: number;
-  nombre: string;
-  apellido: string;
+  nombre_completo: string;
 }
 
 interface Grado {

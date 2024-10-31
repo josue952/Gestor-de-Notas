@@ -10,6 +10,7 @@ use App\Http\Controllers\GradosController;
 use App\Http\Controllers\EstudiantesController;
 use App\Http\Controllers\CalificacionesController;
 use App\Http\Controllers\SubNotasController;
+use App\Http\Controllers\GradoMateriaController;
 
 // Rutas de autenticación
 Route::post('/login', [AuthController::class, 'login']);
@@ -75,5 +76,14 @@ Route::group(['prefix' => 'calificaciones/{calificacion_id}/subnotas'], function
     Route::put('/', [SubNotasController::class, 'update']); // Actualizar subnotas
     Route::delete('/', [SubNotasController::class, 'destroy']); // Eliminar todas las subnotas de una calificación
     Route::delete('/{id_subnota}', [SubNotasController::class, 'deleteSubNota']); // Eliminar una subnota específica
+});
+
+// Rutas de grados_materias
+Route::group(['prefix' => 'grados/{grado_id}/materias'], function () {
+    Route::post('/', [GradoMateriaController::class, 'store']); // Asignar una materia a un grado
+    Route::get('/', [GradoMateriaController::class, 'index']); // Obtener todas las materias de un grado
+    Route::get('/{materia_id}', [GradoMateriaController::class, 'show']); // Obtener una materia específica en un grado
+    Route::put('/{materia_id}', [GradoMateriaController::class, 'update']); // Actualizar una relación específica de grado-materia
+    Route::delete('/{materia_id}', [GradoMateriaController::class, 'destroy']); // Eliminar una materia específica de un grado
 });
 

@@ -24,7 +24,8 @@ const routes: Routes = [
   {
     path: 'grados',
     loadChildren: () => import('./grados/grados.module').then(m => m.GradosPageModule)
-  },  {
+  },
+  {
     path: 'notas',
     loadChildren: () => import('./notas/notas.module').then( m => m.NotasPageModule)
   },
@@ -35,6 +36,10 @@ const routes: Routes = [
   {
     path: 'clases',
     loadChildren: () => import('./clases/clases.module').then( m => m.ClasesPageModule)
+  },
+  {
+    path: 'estudiantes',
+    loadChildren: () => import('./estudiantes/estudiantes.module').then( m => m.EstudiantesPageModule)
   },
 
 ];

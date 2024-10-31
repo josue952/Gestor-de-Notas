@@ -51,8 +51,7 @@
           <ion-label>
             <h2>Usuario ID: {{ usuario.id_usuario }}</h2>
             <p>Nombre de usuario: {{ usuario.username }}</p>
-            <p>Nombre: {{ usuario.nombre }}</p>
-            <p>Apellido: {{ usuario.apellido }}</p>
+            <p>Nombre Completo: {{ usuario.nombre_completo }}</p>
             <p>Email: {{ usuario.email }}</p>
             <p>Rol: {{ usuario.rol }}</p>
           </ion-label>
@@ -100,12 +99,8 @@
               <ion-input type="text" [(ngModel)]="usuarioActual.username" required></ion-input>
             </ion-item>
             <ion-item>
-              <ion-label position="floating">Nombre</ion-label>
-              <ion-input type="text" [(ngModel)]="usuarioActual.nombre" required></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-label position="floating">Apellido</ion-label>
-              <ion-input type="text" [(ngModel)]="usuarioActual.apellido" required></ion-input>
+              <ion-label position="floating">Nombre Completo</ion-label>
+              <ion-input type="text" [(ngModel)]="usuarioActual.nombre_completo" required></ion-input>
             </ion-item>
             <ion-item>
               <ion-label position="floating">Email</ion-label>
