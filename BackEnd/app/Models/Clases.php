@@ -18,6 +18,8 @@ class Clases extends Model
         'descripcion',
         'maestro_id',
         'grado_id',
+        'materia_id',
+        'seccion_id'
     ];
 
     // Relación con el modelo Grado: Una clase pertenece a un grado
@@ -30,5 +32,17 @@ class Clases extends Model
     public function maestro()
     {
         return $this->belongsTo(User::class, 'maestro_id', 'id_usuario');
+    }
+
+    // Relación con el modelo Materia: Una clase pertenece a una materia
+    public function materia()
+    {
+        return $this->belongsTo(Materias::class, 'materia_id', 'id_materia');
+    }
+
+    // Relación con el modelo Seccion: Una clase pertenece a una sección
+    public function seccion()
+    {
+        return $this->belongsTo(Secciones::class, 'seccion_id', 'id_seccion');
     }
 }

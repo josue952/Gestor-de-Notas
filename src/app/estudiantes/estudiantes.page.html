@@ -52,12 +52,13 @@
           <ion-label>
             <h2>Carnet del estudiante: {{ estudiante.carnet_estudiante }}</h2>
             <p>
-              Usuario:
+              Estudiante:
               {{ estudiante.usuario ? estudiante.usuario.nombre_completo : 'Sin Nombre' }}
             </p>
-            <p>Clase: {{ estudiante.clase || 'Sin Clase' }}</p>
-            <p>Grado: {{ estudiante.grado || 'Sin Grado' }}</p>
+            <p>Grado: {{ estudiante.grado?.nombre || 'Sin Grado' }}</p>
           </ion-label>
+          <!-- Enlace para agregar calificaciones usando el carnet del estudiante -->
+          <ion-button slot="end" color="success" [routerLink]="['/notas', estudiante.carnet_estudiante]">Agregar Notas</ion-button>
           <ion-button slot="end" (click)="abrirModal(estudiante)">Editar</ion-button>
           <ion-button slot="end" color="danger"
             (click)="eliminarEstudiante(estudiante.carnet_estudiante)">Eliminar</ion-button>
@@ -86,7 +87,8 @@
         <ng-template>
           <ion-header>
             <ion-toolbar>
-              <ion-title>{{ estudianteActual.carnet_estudiante ? 'Editar' : 'Agregar' }} Estudiante</ion-title>
+              <!-- Título dinámico según modo -->
+              <ion-title>{{ isEditMode ? 'Editar' : 'Agregar' }} Estudiante</ion-title>
               <ion-buttons slot="end">
                 <ion-button (click)="cerrarModal()">Cancelar</ion-button>
               </ion-buttons>
@@ -94,26 +96,39 @@
           </ion-header>
 
           <ion-content class="ion-padding">
+            <!-- Input de Carnet (siempre editable) -->
             <ion-item>
               <ion-label position="floating">Carnet del estudiante</ion-label>
-              <ion-input type="text" [(ngModel)]="estudianteActual.carnet_estudiante" required></ion-input>
+              <ion-input type="text" [(ngModel)]="carnetTemporal" required></ion-input>
             </ion-item>
-            <ion-item>
+
+            <!-- Modo Agregar: Mostrar estudiantesNoRegistrados -->
+            <ion-item *ngIf="!isEditMode">
               <ion-label>Usuario</ion-label>
-              <ion-select [(ngModel)]="estudianteActual.usuario_id" placeholder="Selecciona un alumno">
-                <ion-select-option *ngFor="let alumno of alumnos" [value]="alumno.id_usuario">
-                  {{ alumno.nombre_completo }}
+              <ion-select [(ngModel)]="estudianteActual.usuario_id" placeholder="Seleccionar alumno">
+                <ng-container *ngIf="estudiantesNoRegistrados.length > 0; else noEstudiantes">
+                  <ion-select-option *ngFor="let estudiante of estudiantesNoRegistrados"
+                    [value]="estudiante.id_usuario">
+                    {{ estudiante.nombre_completo }}
+                  </ion-select-option>
+                </ng-container>
+                <ng-template #noEstudiantes>
+                  <ion-select-option disabled>No hay nuevos alumnos que mostrar</ion-select-option>
+                </ng-template>
+              </ion-select>
+            </ion-item>
+
+            <!-- Modo Edición: Mostrar estudianteActual -->
+            <ion-item *ngIf="isEditMode">
+              <ion-label>Estudiante Actual</ion-label><br>
+              <ion-select [(ngModel)]="estudianteActual.carnet_estudiante" disabled>
+                <ion-select-option [value]="estudianteActual.carnet_estudiante">
+                  {{ estudianteActual.usuario?.nombre_completo }}
                 </ion-select-option>
               </ion-select>
             </ion-item>
-            <ion-item>
-              <ion-label>Clase</ion-label>
-              <ion-select [(ngModel)]="estudianteActual.clase_id" placeholder="Selecciona una clase">
-                <ion-select-option *ngFor="let clase of clases" [value]="clase.id_clase">
-                  {{ clase.nombre }}
-                </ion-select-option>
-              </ion-select>
-            </ion-item>
+
+            <!-- Selector de Grado (siempre visible) -->
             <ion-item>
               <ion-label>Grado</ion-label>
               <ion-select [(ngModel)]="estudianteActual.grado_id" placeholder="Selecciona un grado">
@@ -122,11 +137,13 @@
                 </ion-select-option>
               </ion-select>
             </ion-item>
+
+            <!-- Botón Guardar -->
             <ion-button expand="block" (click)="guardarEstudiante()">Guardar</ion-button>
           </ion-content>
         </ng-template>
       </ion-modal>
 
-    </div>
+    </div>  
   </div>
 </ion-content>

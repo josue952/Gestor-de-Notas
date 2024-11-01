@@ -15,7 +15,6 @@ return new class extends Migration
         Schema::create('estudiantes', function (Blueprint $table) {
             $table->unsignedInteger('carnet_estudiante')->unique(); // Cambiado a unsignedInteger
             $table->unsignedBigInteger('usuario_id'); // Llave foránea a la tabla Usuarios
-            $table->unsignedBigInteger('clase_id'); // Llave foránea a la tabla Clases
             $table->unsignedBigInteger('grado_id'); // Nueva columna para referencia al grado
             $table->timestamps();
 
@@ -25,7 +24,6 @@ return new class extends Migration
             $table->foreign('usuario_id')->references('id_usuario')->on('users')->onDelete('cascade');
 
             // Llave foránea referenciando a la tabla Clases
-            $table->foreign('clase_id')->references('id_clase')->on('clases')->onDelete('cascade');
 
             // Llave foránea referenciando a la tabla Grados
             $table->foreign('grado_id')->references('id_grado')->on('grados')->onDelete('cascade');
@@ -35,9 +33,8 @@ return new class extends Migration
         DB::table('estudiantes')->insert([
             [
                 'carnet_estudiante' => 20190001,
-                'usuario_id' => 3, // Ana Gómez
-                'clase_id' => 1, // Primer grado
-                'grado_id' => 1, // ID del grado correspondiente
+                'usuario_id' => 3,
+                'grado_id' => 1, 
                 'created_at' => now(),
                 'updated_at' => now(),
             ]

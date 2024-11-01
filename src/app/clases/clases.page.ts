@@ -3,7 +3,8 @@ import { ModalController, AlertController } from '@ionic/angular';
 import { ClasesService } from '../services/clases.service';
 import { UsersService } from '../services/users.service';
 import { GradosService } from '../services/grados.service';
-
+import { MateriasService } from '../services/materias.service';
+import { SeccionesService } from '../services/secciones.service';
 
 interface Maestro {
   id_usuario: number;
@@ -15,14 +16,28 @@ interface Grado {
   nombre: string;
 }
 
+interface Materia{
+  id_materia: number;
+  nombre: string;
+}
+
+interface Seccion{
+  id_seccion: number;
+  seccion: string;
+}
+
 interface Clases {
   id_clase?: number;
   nombre: string;
   descripcion: string;
-  maestro_id?: number; // Asegúrate que sea un número
-  grado_id?: number;    // Asegúrate que sea un número
+  maestro_id?: number; 
+  grado_id?: number; 
+  materia_id?: number;
+  seccion_id?: number;
   maestro?: Maestro;
   grado?: Grado;
+  materia?: Materia;
+  seccion?: Seccion;
 }
 
 @Component({
@@ -33,8 +48,10 @@ interface Clases {
 export class ClasesPage implements OnInit {
   clases: Clases[] = [];
   paginatedClases: Clases[] = [];
-  maestros: any[] = []; // Array para almacenar los maestros
-  grados: any[] = []; // Array para almacenar los grados
+  maestros: any[] = []; 
+  grados: any[] = [];
+  materias: any[] = []; 
+  secciones: any[] = [];
   modalAbierto = false;
   filtroTexto: string = '';
   filtroGrado: string = '';
@@ -44,6 +61,8 @@ export class ClasesPage implements OnInit {
     descripcion: '',
     maestro_id: 0,
     grado_id: 0,
+    seccion_id: 0,
+    materia_id: 0,
   };
 
   paginaActual: number = 1;
@@ -54,6 +73,8 @@ export class ClasesPage implements OnInit {
     private clasesService: ClasesService,
     private UsersService: UsersService,
     private gradosService: GradosService,
+    private materiasService: MateriasService,
+    private seccionesService: SeccionesService,
     private modalController: ModalController,
     private alertController: AlertController
   ) {
@@ -85,6 +106,8 @@ export class ClasesPage implements OnInit {
     this.cargarClases();
     this.cargarMaestros();
     this.cargarGrados();
+    this.cargarMaterias();
+    this.cargarSecciones();
     this.cerrarModal();
   }
 
@@ -110,7 +133,7 @@ export class ClasesPage implements OnInit {
     }
   }
 
-  //Ccargar a un maestro
+  //Cargar a un maestro
   async cargarMaestro(id: number) {
     try {
       const maestro = await this.UsersService.getUser(id);
@@ -139,6 +162,24 @@ export class ClasesPage implements OnInit {
     }
   }
 
+  //cargar a todas las materias
+  async cargarMaterias() {
+    try {
+      this.materias = await this.materiasService.getMaterias();
+    } catch (error) {
+      console.error('Error al cargar materias:', error);
+    }
+  }
+
+  //Cargar todas las secciones
+  async cargarSecciones() {
+    try {
+      this.secciones = await this.seccionesService.getSecciones();
+    } catch (error) {
+      console.error('Error al cargar secciones:', error);
+    }
+  }
+
   actualizarPaginacion() {
     const inicio = (this.paginaActual - 1) * this.clasesPorPagina;
     this.paginatedClases = this.clases.slice(inicio, inicio + this.clasesPorPagina);
@@ -161,6 +202,8 @@ export class ClasesPage implements OnInit {
         descripcion: '',
         maestro_id: 0,
         grado_id: 0,
+        seccion_id: 0,
+        materia_id: 0,
       };
     }
   }

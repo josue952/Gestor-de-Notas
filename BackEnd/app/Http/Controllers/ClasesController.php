@@ -19,7 +19,9 @@ class ClasesController extends Controller
                 'nombre' => 'required|string|max:100|unique:clases',
                 'descripcion' => 'nullable|string',
                 'maestro_id' => 'nullable|exists:users,id_usuario',
-                'grado_id' => 'required|exists:grados,id_grado', // Validamos que el grado exista
+                'grado_id' => 'required|exists:grados,id_grado', 
+                'materia_id' => 'required|exists:materias,id_materia',
+                'seccion_id' => 'required|exists:secciones,id_seccion'
             ],
             [
                 'nombre.required' => 'El campo nombre es requerido',
@@ -30,6 +32,10 @@ class ClasesController extends Controller
                 'maestro_id.exists' => 'El maestro seleccionado no existe',
                 'grado_id.required' => 'El campo grado_id es requerido',
                 'grado_id.exists' => 'El grado seleccionado no existe',
+                'materia_id.required' => 'El campo materia_id es requerido',
+                'materia_id.exists' => 'La materia seleccionada no existe',
+                'seccion_id.required' => 'El campo seccion_id es requerido',
+                'seccion_id.exists' => 'La sección seleccionada no existe'
             ]
         );
 
@@ -53,6 +59,8 @@ class ClasesController extends Controller
             'descripcion' => $request->descripcion,
             'maestro_id' => $request->maestro_id,
             'grado_id' => $request->grado_id,
+            'materia_id' => $request->materia_id,
+            'seccion_id' => $request->seccion_id
         ]);
 
         return response()->json([
@@ -70,7 +78,9 @@ class ClasesController extends Controller
                 $query->select('id_usuario', 'nombre_completo')
                     ->where('rol', 'Maestro'); // Filtra solo maestros
             },
-            'grado:id_grado,nombre' // Incluye solo los campos necesarios de grados
+            'grado:id_grado,nombre',
+            'materia:id_materia,nombre',
+            'seccion:id_seccion,seccion'
         ])->get();
 
         return response()->json($clases);
@@ -85,7 +95,9 @@ class ClasesController extends Controller
                 $query->select('id_usuario', 'nombre_completo')
                     ->where('rol', 'Maestro'); // Filtra solo maestros
             },
-            'grado:id_grado,nombre' // Incluye solo los campos necesarios de grados
+            'grado:id_grado,nombre',
+            'materia:id_materia,nombre',
+            'seccion:id_seccion,seccion'
         ])->find($id);
 
         if (!$clase) {
@@ -104,7 +116,9 @@ class ClasesController extends Controller
                 'nombre' => 'sometimes|required|string|max:100|unique:clases,nombre,' . $id . ',id_clase',
                 'descripcion' => 'nullable|string',
                 'maestro_id' => 'nullable|exists:users,id_usuario',
-                'grado_id' => 'required|exists:grados,id_grado', // Validamos que el grado exista
+                'grado_id' => 'required|exists:grados,id_grado',
+                'materia_id' => 'required|exists:materias,id_materia',
+                'seccion_id' => 'required|exists:secciones,id_seccion'
             ],
             [
                 'nombre.required' => 'El campo nombre es requerido',
@@ -115,6 +129,10 @@ class ClasesController extends Controller
                 'maestro_id.exists' => 'El maestro seleccionado no existe',
                 'grado_id.required' => 'El campo grado_id es requerido',
                 'grado_id.exists' => 'El grado seleccionado no existe',
+                'materia_id.required' => 'El campo materia_id es requerido',
+                'materia_id.exists' => 'La materia seleccionada no existe',
+                'seccion_id.required' => 'El campo seccion_id es requerido',
+                'seccion_id.exists' => 'La sección seleccionada no existe'
             ]
         );
 
@@ -139,7 +157,7 @@ class ClasesController extends Controller
             }
         }
 
-        $clase->update($request->only(['nombre', 'descripcion', 'maestro_id', 'grado_id']));
+        $clase->update($request->only(['nombre', 'descripcion', 'maestro_id', 'grado_id', 'materia_id', 'seccion_id']));
 
         return response()->json([
             'message' => 'Clase actualizada exitosamente',

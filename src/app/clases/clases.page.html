@@ -57,6 +57,8 @@
               {{ clase.maestro ? (clase.maestro.nombre_completo) : 'Sin Maestro' }}
             </p>
             <p>Grado: {{ clase.grado?.nombre || 'Sin Grado' }}</p>
+            <p>Materia: {{ clase.materia?.nombre || 'Sin Materia' }}</p>
+            <p>Seccion: {{ clase.seccion?.seccion || 'Sin Seccion' }}</p>
           </ion-label>
           <ion-button slot="end" (click)="abrirModal(clase)">Editar</ion-button>
           <ion-button slot="end" color="danger" (click)="eliminarClase(clase.id_clase)">Eliminar</ion-button>
@@ -117,6 +119,23 @@
                 </ion-select-option>
               </ion-select>
             </ion-item>
+            <ion-item>
+              <ion-label>Materia</ion-label>
+              <ion-select [(ngModel)]="claseActual.materia_id" placeholder="Selecciona una materia">
+                <ion-select-option *ngFor="let materia of materias" [value]="materia.id_materia">
+                  {{ materia.nombre }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-label>Sección</ion-label>
+              <ion-select [(ngModel)]="claseActual.seccion_id" placeholder="Selecciona una sección">
+                <ion-select-option *ngFor="let seccion of secciones" [value]="seccion.id_seccion">
+                  {{ seccion.seccion }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+
             <ion-button expand="block" (click)="guardarClase()">Guardar</ion-button>
           </ion-content>
         </ng-template>

@@ -22,18 +22,16 @@ class Estudiantes extends Model
     protected $keyType = 'int';
 
     // Atributos que se pueden asignar de manera masiva
-    protected $fillable = ['carnet_estudiante', 'usuario_id', 'clase_id', 'grado']; // Incluir 'grado'
+    protected $fillable = [
+        'carnet_estudiante', 
+        'usuario_id', 
+        'grado_id'
+    ]; // Incluir 'grado'
 
     // Relación con el modelo Usuario
     public function usuario()
     {
         return $this->belongsTo(User::class, 'usuario_id');
-    }
-
-    // Relación con el modelo Clase
-    public function clase()
-    {
-        return $this->belongsTo(Clases::class, 'clase_id');
     }
 
     // Si 'grado' es un modelo relacionado, puedes definir una relación aquí

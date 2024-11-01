@@ -11,6 +11,7 @@ use App\Http\Controllers\EstudiantesController;
 use App\Http\Controllers\CalificacionesController;
 use App\Http\Controllers\SubNotasController;
 use App\Http\Controllers\GradoMateriaController;
+use App\Http\Controllers\SeccionesController;
 
 // Rutas de autenticación
 Route::post('/login', [AuthController::class, 'login']);
@@ -56,6 +57,7 @@ Route::group(['prefix' => 'estudiantes'], function () {
     Route::post('/', [EstudiantesController::class, 'store']); // Crear estudiante
     Route::get('/', [EstudiantesController::class, 'index']); // Obtener todos los estudiantes
     Route::get('/{carnet_estudiante}', [EstudiantesController::class, 'show']); // Obtener estudiante por carnet
+    Route::get('usuario/alumnosSinRegistrar', [EstudiantesController::class, 'obtenerAlumnosSinRegistrar']); // Obtener todos los alumnos que no han sido registrados
     Route::put('/{carnet_estudiante}', [EstudiantesController::class, 'update']); // Actualizar estudiante por carnet
     Route::delete('/{carnet_estudiante}', [EstudiantesController::class, 'destroy']); // Eliminar estudiante por carnet
 });
@@ -86,4 +88,7 @@ Route::group(['prefix' => 'grados/{grado_id}/materias'], function () {
     Route::put('/{materia_id}', [GradoMateriaController::class, 'update']); // Actualizar una relación específica de grado-materia
     Route::delete('/{materia_id}', [GradoMateriaController::class, 'destroy']); // Eliminar una materia específica de un grado
 });
+
+Route::get('secciones/', [SeccionesController::class, 'get_secciones']); // Obtener todas las secciones
+Route::get('secciones/{id}', [SeccionesController::class, 'get_seccion']); // Obtener una seccion por ID
 
