@@ -1,80 +1,83 @@
 import { Injectable } from '@angular/core';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotasService {
-  private apiUrl = 'http://127.0.0.1:8000/api/calificaciones';
+  private apiUrl = 'http://localhost:8000/api/calificaciones';
 
   constructor() {}
 
-  // Crear una nueva calificación
-  async crearCalificacion(calificacionData: any): Promise<any> {
-    console.log('Datos enviados:', calificacionData);
+  // Crear un nota con manejo específico de errores de validación
+  async createNota(userData: any) {
     try {
-      const response = await axios.post(this.apiUrl, calificacionData);
-      console.log('Respuesta de la API:', response.data); // Muestra la respuesta completa
+      const response = await axios.post(this.apiUrl, userData);
       return response.data;
     } catch (error) {
-      console.error('Error al crear la calificación:', error);
-      throw error;
+      // Usar 'as AxiosError' para especificar el tipo de error
+      const axiosError = error as AxiosError;
+      if (axiosError.response && axiosError.response.status === 400) {
+        // Captura los errores de validación específicos
+        const validationErrors = axiosError.response.data;
+        console.error('Errores de validación:', validationErrors);
+        throw validationErrors; // Lanza los errores para que puedan manejarse en el componente
+      } else {
+        console.error('Error desconocido al crear la nota:', error);
+        throw new Error('Error desconocido, por favor intente nuevamente más tarde.');
+      }
     }
   }
 
-  // Obtener calificaciones de un estudiante por su ID
-  async obtenerCalificacionesPorEstudiante(
-    estudianteId: number
-  ): Promise<any[]> {
+  // Obtener todas una nota por su id
+  async getNotas(id: number) {
     try {
-      const response = await axios.get(
-        `${this.apiUrl}/estudiante/${estudianteId}`
-      ); // Endpoint para obtener calificaciones por estudiante
-      return response.data; // Suponiendo que el backend devuelva un array
-    } catch (error) {
-      console.error(
-        'Error al obtener las calificaciones del estudiante:',
-        error
-      );
-      throw error;
-    }
-  }
-
-  // Obtener una calificación por ID
-  async obtenerCalificacionPorId(idCalificacion: number): Promise<any> {
-    try {
-      const response = await axios.get(`${this.apiUrl}/${idCalificacion}`); // Endpoint para obtener una calificación por ID
-      return response.data; // Suponiendo que el backend devuelva un objeto
-    } catch (error) {
-      console.error('Error al obtener la calificación:', error);
-      throw error;
-    }
-  }
-
-  // Actualizar una calificación
-  async actualizarCalificacion(
-    idCalificacion: number,
-    calificacionData: any
-  ): Promise<any> {
-    try {
-      const response = await axios.put(
-        `${this.apiUrl}/${idCalificacion}`,
-        calificacionData
-      );
+      const response = await axios.get(`${this.apiUrl}/${id}`);
       return response.data;
     } catch (error) {
-      console.error('Error al actualizar la calificación:', error);
+      console.error('Error al obtener las notas:', error);
       throw error;
     }
   }
 
-  // Eliminar una calificación
-  async eliminarCalificacion(idCalificacion: number): Promise<any> {
+  // Obtener una nota por el carnet del estudiante
+  async getNota(id: number) {
     try {
-      const response = await axios.delete(`${this.apiUrl}/${idCalificacion}`);
+      const response = await axios.get(`${this.apiUrl}/estudiante/${id}`);
       return response.data;
     } catch (error) {
-      console.error('Error al eliminar la calificación:', error);
+      console.error('Error al obtener la nota:', error);
+      throw error;
+    }
+  }
+
+  // Actualizar una nota
+  async updateNota(id: number, updatedData: any) {
+    try {
+      const response = await axios.put(`${this.apiUrl}/${id}`, updatedData);
+      return response.data;
+    } catch (error) {
+      // Usar 'as AxiosError' para especificar el tipo de error
+      const axiosError = error as AxiosError;
+      if (axiosError.response && axiosError.response.status === 400) {
+        // Captura los errores de validación específicos
+        const validationErrors = axiosError.response.data;
+        console.error('Errores de validación:', validationErrors);
+        throw validationErrors; // Lanza los errores para que puedan manejarse en el componente
+      } else {
+        console.error('Error desconocido al editar la nota:', error);
+        throw new Error('Error desconocido, por favor intente nuevamente más tarde.');
+      }
+    }
+  }
+
+  // Eliminar una nota
+  async deleteNota(id: number) {
+    try {
+      const response = await axios.delete(`${this.apiUrl}/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error al eliminar la nota:', error);
       throw error;
     }
   }

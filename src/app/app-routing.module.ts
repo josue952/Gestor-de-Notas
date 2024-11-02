@@ -26,7 +26,7 @@ const routes: Routes = [
     loadChildren: () => import('./grados/grados.module').then(m => m.GradosPageModule)
   },
   {
-    path: 'notas',
+    path: 'notas/:carnet_estudiante',
     loadChildren: () => import('./notas/notas.module').then( m => m.NotasPageModule)
   },
   {
