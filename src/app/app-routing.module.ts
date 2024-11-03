@@ -41,6 +41,10 @@ const routes: Routes = [
     path: 'estudiantes',
     loadChildren: () => import('./estudiantes/estudiantes.module').then( m => m.EstudiantesPageModule)
   },
+  {
+    path: 'sub-notas/:id_calificacion', // Asegúrate de que el nombre del parámetro sea correcto
+    loadChildren: () => import('./notas/sub-notas/sub-notas.module').then(m => m.SubNotasPageModule)
+  }
 
 ];
 

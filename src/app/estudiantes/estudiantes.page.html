@@ -36,11 +36,11 @@
           <ion-col size="4" class="ion-text-end">
             <div class="filter-container">
               <ion-label>Filtrar por Grado</ion-label>
-              <ion-select [(ngModel)]="filtroEstado" (ionChange)="aplicarFiltro()" placeholder="Seleccione un filtro">
+              <ion-select [(ngModel)]="filtroGrado" (ionChange)="aplicarFiltro()" placeholder="Seleccione un filtro">
                 <ion-select-option value="">Todos</ion-select-option>
-                <ion-select-option>Estudiantes</ion-select-option>
-                <ion-select-option>Alumnos Registrados</ion-select-option>
-                <ion-select-option>Alumnos No Registrados</ion-select-option>
+                <ion-select-option *ngFor="let grado of grados" [value]="grado.id_grado">
+                  {{ grado.nombre }} 
+              </ion-select-option>
               </ion-select>
             </div>
           </ion-col>

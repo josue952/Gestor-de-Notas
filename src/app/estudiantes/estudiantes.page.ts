@@ -38,7 +38,7 @@
     estudiantesNoRegistrados: Usuarios[] = []; // Almacena estudiantes no registrados
     paginatedEstudiantes: Estudiantes[] = [];
     filtroTexto: string = '';
-    filtroEstado: string = 'todos';
+    filtroGrado: string = 'todos';
     modalAbierto = false;
     estudianteActual: Estudiantes = {
       carnet_estudiante: 0,
@@ -63,21 +63,13 @@
     aplicarFiltro() {
       let estudiantesFiltrados: Estudiantes[] = [];
 
-      if (this.filtroEstado === 'todos') {
-        estudiantesFiltrados = this.estudiantes;
-      } else if (this.filtroEstado === 'registrados') {
-        estudiantesFiltrados = this.estudiantes.filter((estudiante) =>
-          this.alumnos.some(
-            (alumno) => alumno.id_usuario === estudiante.usuario_id
-          )
-        );
-      } else if (this.filtroEstado === 'no-registrados') {
+      // Filtrado por grado si es necesario
+      if (this.filtroGrado !== 'todos') {
         estudiantesFiltrados = this.estudiantes.filter(
-          (estudiante) =>
-            !this.alumnos.some(
-              (alumno) => alumno.id_usuario === estudiante.usuario_id
-            )
+          (estudiante) => estudiante.grado?.nombre === this.filtroGrado
         );
+      } else {
+        estudiantesFiltrados = this.estudiantes;
       }
 
       // Filtrado por texto adicional en el nombre del estudiante si es necesario
@@ -182,8 +174,8 @@
         const carnet_estudiante = this.estudianteActual.carnet_estudiante;
         const estudiante = await this.estudiantesService.getEstudiante(carnet_estudiante);
         
-        // Aquí verifica que la respuesta del servicio contenga el ID del estudiante.
-        this.estudianteActual = estudiante;    
+        this.estudianteActual = estudiante;  
+        this.actualizarPaginacion();  
       } catch (error) {
         console.error('Error al cargar el estudiante específico:', error);
         this.mostrarAlertaError('Error al cargar el estudiante específico. Inténtelo de nuevo más tarde.');
