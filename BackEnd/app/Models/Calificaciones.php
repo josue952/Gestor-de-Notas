@@ -13,11 +13,11 @@ class Calificaciones extends Model
     protected $primaryKey = 'id_calificacion';
 
     protected $fillable = [
-        'estudiante_id', 
-        'clase_id', 
-        'materia_id', 
-        'maestro_id', 
-        'nota_final', 
+        'estudiante_id',
+        'clase_id',
+        'materia_id',
+        'maestro_id',
+        'nota_final',
         'fecha_asignacion'
     ];
 
@@ -39,7 +39,7 @@ class Calificaciones extends Model
         return $this->belongsTo(Materias::class, 'materia_id', 'id_materia');
     }
 
-    // Relación con Maestro
+    // Relación con Maestro (modelo User)
     public function maestro()
     {
         return $this->belongsTo(User::class, 'maestro_id', 'id_usuario');

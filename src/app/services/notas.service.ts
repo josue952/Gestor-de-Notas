@@ -51,6 +51,17 @@ export class NotasService {
     }
   }
 
+  // Obtener una todas las clases segun el id de la materia
+  async getClasesPorMateria(id: number) {
+    try {
+      const response = await axios.get(`${this.apiUrl}/materia/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener las clases de la materia:', error);
+      throw error;
+    }
+  }
+
   // Actualizar una nota
   async updateNota(id: number, updatedData: any) {
     try {

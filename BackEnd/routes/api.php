@@ -67,9 +67,10 @@ Route::group(['prefix' => 'calificaciones'], function () {
     Route::post('/', [CalificacionesController::class, 'store']); // Crear una nueva calificación
     Route::get('{id_calificacion}', [CalificacionesController::class, 'show']); // Obtener una calificación por su ID
     Route::get('estudiante/{estudiante_id}', [CalificacionesController::class, 'obtenerCalificacionesPorEstudiante']); // Obtener todas las calificaciones de un estudiante por su ID
+    Route::get('materia/{materia_id}', [CalificacionesController::class, 'obtenerClasesPorMateria']); // Obtener todas las clases de una materia por su ID  
     Route::put('{id_calificacion}', [CalificacionesController::class, 'update']); // Actualizar una calificación por su ID
     Route::delete('{id_calificacion}', [CalificacionesController::class, 'destroy']); // Eliminar una calificación por su ID
-});
+});     
 
 // Rutas de subnotas
 Route::group(['prefix' => 'calificaciones/{calificacion_id}/subnotas'], function () {
