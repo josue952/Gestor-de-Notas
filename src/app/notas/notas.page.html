@@ -79,7 +79,8 @@
             <p>Nota Final: {{ calificacion.nota_final }}</p>
             <p>Fecha: {{ calificacion.fecha_asignacion | date:'shortDate' }}</p>
           </ion-label>
-          <ion-button slot="end" color="success" [routerLink]="['/sub-notas', calificacion.id_calificacion]">Calificar Estudiante</ion-button>
+          <ion-button slot="end" color="success" (click)="calificarEstudiante(calificacion)">Calificar
+            Estudiante</ion-button>
           <ion-button slot="end" (click)="abrirModal(calificacion)">Editar</ion-button>
           <ion-button slot="end" color="danger"
             (click)="eliminarCalificacion(calificacion.id_calificacion)">Eliminar</ion-button>

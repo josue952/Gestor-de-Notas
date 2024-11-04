@@ -1,11 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, AlertController } from '@ionic/angular';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router'; // Cambia Route por Router
 import { NotasService } from '../services/notas.service';
 import { ClasesService } from '../services/clases.service';
 import { MateriasService } from '../services/materias.service';
 import { EstudiantesService } from '../services/estudiantes.service';
 import { UsersService } from '../services/users.service';
+import { GradosService } from '../services/grados.service';
+
+interface Grado {
+  id_grado: number;
+  nombre: string;
+  registros: number;
+}
 
 interface Clase {
   id_clase: number;
@@ -25,8 +32,10 @@ interface Usuario {
 interface Estudiantes {
   estudiante_id?: number;
   carnet_estudiante: number;
+  grado_id: number;
   usuario_id: number;
   usuario?: Usuario;
+  grado?: Grado;
 }
 
 interface Calificacion {
@@ -57,6 +66,7 @@ export class NotasPage implements OnInit {
   clases: Clase[] = [];
   estudiantes: Estudiantes[] = [];
   usuarios: Usuario[] = [];
+  grados: Grado[] = [];
   clasesDisponibles = false;
   filtroClase: string = '';
   filtroMateria: string = '';
@@ -75,14 +85,38 @@ export class NotasPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router, // Cambia Route por Router
     private notasService: NotasService,
     private materiasService: MateriasService,
     private clasesService: ClasesService,
     private estudiantesService: EstudiantesService,
     private usersService: UsersService,
+    private gradosService: GradosService,
     private modalController: ModalController,
     private alertController: AlertController
   ) {}
+
+  calificarEstudiante(calificacion: Calificacion) {
+    // Busca el grado del estudiante
+    const gradoEstudiante = this.grados.find(grado => grado.id_grado === calificacion.estudiante?.grado_id);
+  
+    // Crea un objeto con los datos que necesitas, incluyendo el nombre y los registros del grado
+    const datosEstudiante = {
+      nombre: calificacion.estudiante?.usuario?.nombre_completo,
+      carnet: calificacion.estudiante_id,
+      clase: calificacion.clase?.nombre,
+      materia: calificacion.materia?.nombre,
+      grado_id: calificacion.estudiante?.grado_id,
+      grado_nombre: gradoEstudiante?.nombre,
+      grado_registros: gradoEstudiante?.registros,
+      fecha: calificacion.fecha_asignacion,
+    };
+  
+    // Redirige a la ruta deseada y pasa los datos como estado
+    this.router.navigate(['/sub-notas', calificacion.id_calificacion], {
+      state: { datosEstudiante },
+    });
+  }
 
   aplicarFiltro() {
     this.paginaActual = 1; // Resetea a la primera página al aplicar filtro
@@ -120,6 +154,7 @@ export class NotasPage implements OnInit {
     this.cargarClases();
     this.cargarEstudiantes();
     this.cargarUsuarios();
+    this.cargarGrados();
   }
 
   cambiarPagina(pagina: number) {
@@ -138,7 +173,7 @@ export class NotasPage implements OnInit {
 
   async cargarMaterias() {
     try {
-      this.materias = await this.materiasService.getMaterias(); // Método para obtener materias
+      this.materias = await this.materiasService.getMaterias();
       console.log('Materias cargadas:', this.materias);
     } catch (error) {
       console.error('Error al cargar materias:', error);
@@ -147,7 +182,7 @@ export class NotasPage implements OnInit {
 
   async cargarClases() {
     try {
-      this.clases = await this.clasesService.getClases(); // Método para obtener materias
+      this.clases = await this.clasesService.getClases();
       console.log('Clases cargadas:', this.clases);
     } catch (error) {
       console.error('Error al cargar clases:', error);
@@ -156,7 +191,7 @@ export class NotasPage implements OnInit {
 
   async cargarEstudiantes() {
     try {
-      this.estudiantes = await this.estudiantesService.getEstudiantes(); // Método para obtener materias
+      this.estudiantes = await this.estudiantesService.getEstudiantes();
       console.log('Estudiantes cargados:', this.estudiantes);
     } catch (error) {
       console.error('Error al cargar estudiantes:', error);
@@ -165,10 +200,28 @@ export class NotasPage implements OnInit {
 
   async cargarUsuarios() {
     try {
-      this.usuarios = await this.usersService.getUsers(); // Método para obtener materias
+      this.usuarios = await this.usersService.getUsers();
       console.log('Usuarios cargados:', this.usuarios);
     } catch (error) {
       console.error('Error al cargar usuarios:', error);
+    }
+  }
+
+  async cargarGrados() {
+    try {
+      this.grados = await this.gradosService.getGrados();
+      console.log('Grados cargados:', this.grados);
+    } catch (error) {
+      console.error('Error al cargar grados:', error);
+    }
+  }
+
+  async cargarGrado(id: number) {
+    try {
+      this.grados = await this.gradosService.getGrado(id); 
+      console.log('Grado cargado:', this.grados);
+    } catch (error) {
+      console.error('Error al cargar grado:', error);
     }
   }
 

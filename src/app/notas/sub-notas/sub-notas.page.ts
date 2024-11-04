@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, AlertController } from '@ionic/angular';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router'; // Cambia Route por Router
 import { NotasService } from '../../services/notas.service';
 import { SubNotasService } from '../../services/sub-notas.service';
-import { ClasesService } from '../../services/clases.service';
-import { MateriasService } from '../../services/materias.service';
 import { EstudiantesService } from '../../services/estudiantes.service';
-import { UsersService } from '../../services/users.service';
 
 interface Clase {
   id_clase: number;
@@ -56,14 +53,24 @@ interface SubNota {
   styleUrls: ['./sub-notas.page.scss'],
 })
 export class SubNotasPage implements OnInit {
+  // Nueva propiedad para almacenar el array temporal de subnotas
+  subNotasArray: number[] = [];
+  inputsArray: number[] = []; // Controla la cantidad de inputs en el modal
+
+
   calificacion_id: number | null = null;
+  nombreEstudiante: string | undefined;
+  carnetEstudiante: number | undefined;
+  claseCalificacion: string | undefined;
+  materiaCalificacion: string | undefined;
+  id_gradoCalificacion: number | undefined;
+  nombre_gradoCalificacion: string | undefined;
+  registros_gradoCalificacion: number | undefined;
+  fechaCalificacion: string | undefined;
 
   subnota: SubNota[] = [];
   calificacion: Calificacion[] = [];
-  materias: Materia[] = [];
-  clases: Clase[] = [];
   estudiantes: Estudiantes[] = [];
-  usuarios: Usuario[] = [];
   modalAbierto = false;
   paginatedSubNotas: SubNota[] = [];
   paginaActual: number = 1;
@@ -78,12 +85,10 @@ export class SubNotasPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router, // Cambia Route por Router
     private subNotasService: SubNotasService,
     private notasService: NotasService,
-    private materiasService: MateriasService,
-    private clasesService: ClasesService,
     private estudiantesService: EstudiantesService,
-    private usersService: UsersService,
     private modalController: ModalController,
     private alertController: AlertController
   ) {}
@@ -111,50 +116,31 @@ export class SubNotasPage implements OnInit {
   ngOnInit() {
     this.calificacion_id = Number(
       this.route.snapshot.paramMap.get('id_calificacion')
-    ); // Asegúrate de usar 'id_calificacion'
+    );
+
+    // Accede a los datos enviados
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras?.state) {
+      const datosEstudiante = navigation.extras.state['datosEstudiante'];
+      console.log('Datos del estudiante:', datosEstudiante);
+
+      // Asigna los datos del estudiante a las propiedades
+      this.nombreEstudiante = datosEstudiante?.nombre;
+      this.carnetEstudiante = datosEstudiante?.carnet;
+      this.claseCalificacion = datosEstudiante?.clase;
+      this.materiaCalificacion = datosEstudiante?.materia;
+      this.id_gradoCalificacion = datosEstudiante?.grado_id;
+      this.nombre_gradoCalificacion = datosEstudiante?.grado_nombre;
+      this.registros_gradoCalificacion = datosEstudiante?.grado_registros;
+      this.fechaCalificacion = datosEstudiante?.fecha;
+    }
+
     console.log('ID de la calificación:', this.calificacion_id);
-    this.cargarSubNotas(this.calificacion_id!);
-    this.cargarMaterias();
-    this.cargarClases();
-    this.cargarEstudiantes();
-    this.cargarUsuarios();
+    console.log('ID del grado:', this.id_gradoCalificacion);
+    console.log('Nombre del grado:', this.nombre_gradoCalificacion);
+    console.log('Registros del grado:', this.registros_gradoCalificacion);
+    this.cargarSubNotas();
     this.cargarCalificacion(this.calificacion_id!);
-  }
-
-  async cargarMaterias() {
-    try {
-      this.materias = await this.materiasService.getMaterias(); // Método para obtener materias
-      console.log('Materias cargadas:', this.materias);
-    } catch (error) {
-      console.error('Error al cargar materias:', error);
-    }
-  }
-
-  async cargarClases() {
-    try {
-      this.clases = await this.clasesService.getClases(); // Método para obtener materias
-      console.log('Clases cargadas:', this.clases);
-    } catch (error) {
-      console.error('Error al cargar clases:', error);
-    }
-  }
-
-  async cargarEstudiantes() {
-    try {
-      this.estudiantes = await this.estudiantesService.getEstudiantes(); // Método para obtener materias
-      console.log('Estudiantes cargados:', this.estudiantes);
-    } catch (error) {
-      console.error('Error al cargar estudiantes:', error);
-    }
-  }
-
-  async cargarUsuarios() {
-    try {
-      this.usuarios = await this.usersService.getUsers(); // Método para obtener materias
-      console.log('Usuarios cargados:', this.usuarios);
-    } catch (error) {
-      console.error('Error al cargar usuarios:', error);
-    }
   }
 
   cambiarPagina(pagina: number) {
@@ -171,65 +157,83 @@ export class SubNotasPage implements OnInit {
     );
   }
 
-  async cargarSubNotas(calificacionId: number) {
+  async cargarSubNotas() {
     try {
-      this.subnota = await this.subNotasService.getSubNotas(calificacionId);
-      console.log('Subnotas cargadas:', this.subnota);
-      
-      // Asegúrate de paginar después de cargar
-      this.paginatedSubNotas = this.paginarSubNotas(this.subnota);
+      if (this.calificacion_id) {
+        const response = await this.subNotasService.getSubNotas(
+          this.calificacion_id
+        );
+        // Asegúrate de que la respuesta contiene la estructura que esperas
+        if (response && response.subnotas && Array.isArray(response.subnotas)) {
+          this.subnota = response.subnotas; // Asigna el array de sub-notas al estado
+          console.log('SubNotas cargadas:', this.subnota);
+        } else {
+          console.error('getSubNotas no retornó un array válido:', response);
+        }
+        this.actualizarPaginacion(); // Actualiza la paginación
+      }
     } catch (error) {
-      console.error('Error al cargar subnotas:', error);
+      console.error('Error al cargar SubNotas:', error);
     }
   }
 
   async cargarCalificacion(id: number) {
     try {
-      this.calificacion = await this.notasService.getNotas(id);
-      console.log('Calificacion cargada:', this.calificacion);
+      const calificacionActual = await this.notasService.getNotas(id);
+      console.log('Calificación cargada:', calificacionActual);
     } catch (error) {
-      console.error('Error al cargar la califiacion:', error);
+      console.error('Error al cargar la calificación:', error);
     }
   }
 
   abrirModal(subnota?: SubNota) {
     this.modalAbierto = true;
+
+    // Si ya existen subnotas, inicializa los inputs con esos valores
     if (subnota) {
       this.subNotaActual = { ...subnota };
+      this.subNotasArray = [subnota.subnota]; // Asumiendo que `subnota.subnota` is a single number
     } else {
       this.subNotaActual = {
         id_subnota: 0,
         calificacion_id: 0,
         subnota: 0,
       };
+      // Genera el array vacío basado en `registros_gradoCalificacion` (número de inputs)
+      this.inputsArray = Array(this.registros_gradoCalificacion).fill(0);
+      this.subNotasArray = new Array(this.registros_gradoCalificacion).fill(null);
     }
   }
 
   cerrarModal() {
     this.modalAbierto = false;
   }
-
+  
+  // Método para verificar que al menos un input tiene un valor
+  isAtLeastOneInputFilled(): boolean {
+    return this.subNotasArray.some((nota) => nota !== null && nota !== undefined && nota !== 0);
+  }
+  
+  // Modifica el método de guardar subnota
   async guardarSubNota() {
     try {
+      // Filtra los valores vacíos para enviar solo las subnotas que tienen valor
+      const subnotas = this.subNotasArray.filter(nota => nota !== null && nota !== undefined && nota !== 0);
       if (this.subNotaActual.id_subnota) {
-        // Llama a `updateNota` cuando existe `id_subnota` para actualizar la sub-nota
-        await this.subNotasService.updateNota(
-          this.calificacion_id!,
-          this.subNotaActual
-        );
+        // Llama a `updateNota` con el array de subnotas si existe `id_subnota`
+        await this.subNotasService.updateNota(this.calificacion_id!, { ...this.subNotaActual, subnotas });
       } else {
-        // Llama a `createSubNota` para crear una nueva sub-nota si `id_subnota` no existe
-        await this.subNotasService.createSubNota(
-          this.calificacion_id!,
-          this.subNotaActual
-        );
+        // Llama a `createSubNota` con el array de subnotas si es una nueva nota
+        console.log('ID calificación:', this.calificacion_id);
+        await this.subNotasService.createSubNota(this.calificacion_id!, { subnotas });
       }
       this.cerrarModal();
-      this.cargarSubNotas(this.calificacion_id!);
+      this.cargarSubNotas();
     } catch (error) {
       console.error('Error al guardar la calificacion:', error);
     }
   }
+
 
   async mostrarAlertaError(mensaje: string) {
     const alert = await this.alertController.create({
@@ -265,7 +269,7 @@ export class SubNotasPage implements OnInit {
           handler: async () => {
             try {
               await this.subNotasService.deleteSubNotas(calificacionId);
-              await this.cargarSubNotas(calificacionId); // Recarga las sub-notas después de eliminar
+              await this.cargarSubNotas(); // Recarga las sub-notas después de eliminar
             } catch (error) {
               console.error('Error al eliminar todas las sub-notas:', error);
             }
@@ -306,7 +310,7 @@ export class SubNotasPage implements OnInit {
                 calificacionId,
                 subNotaId
               );
-              await this.cargarSubNotas(calificacionId); // Recarga las sub-notas después de eliminar
+              await this.cargarSubNotas(); // Recarga las sub-notas después de eliminar
             } catch (error) {
               console.error('Error al eliminar la sub-nota:', error);
             }

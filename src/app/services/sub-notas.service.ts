@@ -11,9 +11,9 @@ export class SubNotasService {
   constructor() {}
 
   // Crear un sub-nota con manejo específico de errores de validación
-  async createSubNota( id: number, userData: any) {
+  async createSubNota( id_calificacion: number, userData: any) {
     try {
-      const response = await axios.post(`${this.apiUrl}/${id}/subnotas`, userData);
+      const response = await axios.post(`${this.apiUrl}/${id_calificacion}/subnotas`, userData);
       return response.data;
     } catch (error) {
       // Usar 'as AxiosError' para especificar el tipo de error
@@ -40,7 +40,6 @@ export class SubNotasService {
       throw error;
     }
   }
-
 
   // Actualizar una sub-nota
   async updateNota(id: number, updatedData: any) {

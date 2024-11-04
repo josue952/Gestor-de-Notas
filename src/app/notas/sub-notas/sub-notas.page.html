@@ -40,28 +40,18 @@
         </ion-row>
       </div>
 
-      <!-- Aquí se muestra el nombre del estudiante una sola vez -->
-      <h2>Nombre del estudiante: {{ paginatedSubNotas[0]?.calificacion }}</h2>
-
-      <!-- Aquí se muestra el carnet del estudiante una sola vez -->
-      <h2>Carnet del estudiante: {{ paginatedSubNotas[0]?.calificacion?.estudiante?.carnet_estudiante }}</h2>
-
-      <!-- Aquí se muestra la clase de la calificacion -->
-      <h2>Clase: {{ paginatedSubNotas[0]?.calificacion?.clase?.nombre }}</h2>
-
-      <!-- Aquí se muestra la materia de la calificacion -->
-      <h2>Materia: {{ paginatedSubNotas[0]?.calificacion?.materia?.nombre }}</h2>
-
-      <!-- Aquí se muestra la nota final de la calificacion -->
-      <h2>Nota final: {{ paginatedSubNotas[0]?.calificacion?.nota_final }}</h2> 
-
-      <!-- Aquí se muestra la fecha de la calificacion -->
-      <h2>Fecha asignación: {{ paginatedSubNotas[0]?.calificacion?.fecha_asignacion | date:'shortDate' }}</h2>
+      <!-- Muestra los datos del estudiante -->
+      <h2>Nombre del estudiante: {{ nombreEstudiante }}</h2>
+      <h2>Carnet del estudiante: {{ carnetEstudiante }}</h2>
+      <h2>Clase: {{ claseCalificacion }}</h2>
+      <h2>Materia: {{ materiaCalificacion }}</h2>
+      <h2>Nota Final: </h2>
+      <h2>Fecha: {{ fechaCalificacion }}</h2>
 
       <ion-list *ngIf="paginatedSubNotas.length > 0; else noSubNotas">
         <ion-item *ngFor="let subnota of paginatedSubNotas">
           <ion-label>
-            <p>Nota: {{ subnota.subnota }}</p> <!-- Asegúrate de acceder a subnota correctamente -->
+            <p>Nota: {{ subnota.subnota }}</p>
           </ion-label>
           <ion-button slot="end" (click)="abrirModal(subnota)">Editar</ion-button>
           <ion-button slot="end" color="danger"
@@ -83,18 +73,22 @@
               </ion-buttons>
             </ion-toolbar>
           </ion-header>
-
+      
           <ion-content class="ion-padding">
-            <ion-item>
-              <ion-label position="floating">Nota</ion-label>
-              <ion-input type="number" [(ngModel)]="subNotaActual.id_subnota" disabled></ion-input>
-            </ion-item>
-
-            <ion-button expand="block" (click)="guardarSubNota()">Guardar</ion-button>
+            <ng-container *ngFor="let inputIndex of inputsArray; let i = index">
+              <ion-item>
+                <ion-label position="floating">Nota {{ i + 1 }}</ion-label>
+                <ion-input type="number" [(ngModel)]="subNotasArray[i]"></ion-input>
+              </ion-item>
+            </ng-container>
+      
+            <ion-button expand="block" [disabled]="!isAtLeastOneInputFilled()" (click)="guardarSubNota()">
+              Guardar
+            </ion-button>
           </ion-content>
         </ng-template>
       </ion-modal>
-      
+
     </div>
   </div>
 </ion-content>

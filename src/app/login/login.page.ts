@@ -49,8 +49,8 @@ export class LoginPage implements OnInit {
   
           // Mostrar alerta de error
           const alert = await this.alertController.create({
-            header: 'Login Failed',
-            message: 'Incorrect email or password. Please try again.',
+            header: 'Error al iniciar sesion',
+            message: 'Correo o contraseña incorrecta.',
             buttons: ['OK']
           });
           await alert.present();

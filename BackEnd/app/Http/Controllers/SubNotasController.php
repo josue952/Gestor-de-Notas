@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\SubNotas;
+use App\Models\Estudiantes;
 use App\Models\Calificaciones;
 use App\Models\Grados;
 
@@ -14,8 +15,8 @@ class SubNotasController extends Controller
     {
         // Validar los datos de entrada
         $request->validate([
-            'subnotas' => 'required|array', // Se espera un array de subnotas
-            'subnotas.*' => 'required|numeric|min:0|max:10', // Cada subnota debe ser un número entre 0 y 10
+            'subnotas' => 'required|array',
+            'subnotas.*' => 'required|numeric|min:0|max:10',
         ]);
 
         // Verificar si ya existen subnotas asociadas a esta calificación
@@ -26,13 +27,29 @@ class SubNotasController extends Controller
             ], 400);
         }
 
-        // Obtener la calificación y el grado asociado
+        // Obtener la calificación
         $calificacion = Calificaciones::findOrFail($calificacion_id);
-        $grado = Grados::findOrFail($calificacion->clase->grado_id);
+        \Log::info("Datos de calificación: " . json_encode($calificacion));
+
+        // Obtener el estudiante asociado a esta calificación
+        $estudiante = Estudiantes::find($calificacion->estudiante_id); // Asumiendo que hay un campo `estudiante_id`
+        \Log::info("Datos del estudiante: " . json_encode($estudiante));
+
+        if (!$estudiante || !$estudiante->grado) {
+            return response()->json([
+                'error' => 'No se pudo encontrar el grado asociado a este estudiante.'
+            ], 400);
+        }
+
+        $grado = $estudiante->grado; // Obtener el grado del estudiante
+        \Log::info("Datos de grado: " . json_encode($grado));
 
         // Verificar que el número de subnotas no exceda el valor de "registros" en la tabla Grados
         $numRegistrosPermitidos = (int) $grado->registros;
         $numSubNotas = count($request->subnotas);
+
+        \Log::info("Número de registros permitidos para el grado: $numRegistrosPermitidos");
+        \Log::info("Subnotas recibidas: " . json_encode($request->subnotas));
 
         if ($numSubNotas > $numRegistrosPermitidos) {
             return response()->json([
@@ -61,12 +78,26 @@ class SubNotasController extends Controller
         ], 200);
     }
 
-    // Obtener las subnotas de una calificación
+    // Obtener las subnotas de una calificación, y la información de la calificación
     public function show($calificacion_id)
     {
+        // Obtener la calificación por ID
+        $calificacion = Calificaciones::findOrFail($calificacion_id);
+
+        // Obtener las subnotas asociadas a la calificación utilizando la relación definida en SubNotas
         $subnotas = SubNotas::where('calificacion_id', $calificacion_id)->get();
 
-        return response()->json($subnotas, 200);
+        // Verificar si existen subnotas asociadas
+        if ($subnotas->isEmpty()) {
+            return response()->json([
+                'error' => 'No se encontraron subnotas asociadas a esta calificación.'
+            ], 404);
+        }
+
+        return response()->json([
+            'calificacion' => $calificacion,
+            'subnotas' => $subnotas->toArray(), // Convierte a un array
+        ], 200);
     }
 
     // Actualizar las subnotas de una calificación
@@ -128,7 +159,7 @@ class SubNotasController extends Controller
             'nota_final' => $notaFinal,
         ], 200);
     }
-    
+
     // Cambiar el valor de todas las subnotas de una calificación a 0
     public function destroy($calificacion_id)
     {
