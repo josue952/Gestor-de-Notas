@@ -65,6 +65,7 @@ export class SubNotasService {
   async deleteSubNotas(id: number) {
     try {
       const response = await axios.delete(`${this.apiUrl}/${id}/subnotas`);
+      console.log('Ruta:', `${this.apiUrl}/${id}/subnotas`);
       return response.data;
     } catch (error) {
       console.error('Error al eliminar las sub-notas:', error);

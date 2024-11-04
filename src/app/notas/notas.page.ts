@@ -98,8 +98,10 @@ export class NotasPage implements OnInit {
 
   calificarEstudiante(calificacion: Calificacion) {
     // Busca el grado del estudiante
-    const gradoEstudiante = this.grados.find(grado => grado.id_grado === calificacion.estudiante?.grado_id);
-  
+    const gradoEstudiante = this.grados.find(
+      (grado) => grado.id_grado === calificacion.estudiante?.grado_id
+    );
+
     // Crea un objeto con los datos que necesitas, incluyendo el nombre y los registros del grado
     const datosEstudiante = {
       nombre: calificacion.estudiante?.usuario?.nombre_completo,
@@ -111,7 +113,7 @@ export class NotasPage implements OnInit {
       grado_registros: gradoEstudiante?.registros,
       fecha: calificacion.fecha_asignacion,
     };
-  
+
     // Redirige a la ruta deseada y pasa los datos como estado
     this.router.navigate(['/sub-notas', calificacion.id_calificacion], {
       state: { datosEstudiante },
@@ -120,19 +122,21 @@ export class NotasPage implements OnInit {
 
   aplicarFiltro() {
     this.paginaActual = 1; // Resetea a la primera página al aplicar filtro
-  
-    const calificacionesFiltradas = this.calificaciones.filter((calificacion) => {
-      const coincideClase = this.filtroClase
-        ? calificacion.clase?.id_clase === Number(this.filtroClase)
-        : true;
-  
-      const coincideMateria = this.filtroMateria
-        ? calificacion.materia?.id_materia === Number(this.filtroMateria)
-        : true;
-  
-      return coincideClase && coincideMateria;
-    });
-  
+
+    const calificacionesFiltradas = this.calificaciones.filter(
+      (calificacion) => {
+        const coincideClase = this.filtroClase
+          ? calificacion.clase?.id_clase === Number(this.filtroClase)
+          : true;
+
+        const coincideMateria = this.filtroMateria
+          ? calificacion.materia?.id_materia === Number(this.filtroMateria)
+          : true;
+
+        return coincideClase && coincideMateria;
+      }
+    );
+
     this.paginatedCalificaciones = this.paginarNotas(calificacionesFiltradas);
   }
 
@@ -218,7 +222,7 @@ export class NotasPage implements OnInit {
 
   async cargarGrado(id: number) {
     try {
-      this.grados = await this.gradosService.getGrado(id); 
+      this.grados = await this.gradosService.getGrado(id);
       console.log('Grado cargado:', this.grados);
     } catch (error) {
       console.error('Error al cargar grado:', error);
@@ -293,6 +297,22 @@ export class NotasPage implements OnInit {
       this.cargarCalificaciones();
     } catch (error) {
       console.error('Error al guardar la calificación:', error);
+
+      // Mensaje de error por defecto
+      let mensajeError = 'Por favor, intente nuevamente más tarde';
+
+      // Verifica si el error tiene la estructura esperada
+      if (error && error && typeof error === 'string') {
+        mensajeError = error; // Asigna directamente el mensaje de error
+      } else if (error === 'validation_failed' && error) {
+        mensajeError = Object.values(error)
+          .map((err: any) => err[0])
+          .join(', ');
+      }
+
+      this.mostrarAlertaError(
+        'Error al guardar el estudiante. ' + mensajeError
+      );
     }
   }
 

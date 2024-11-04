@@ -20,10 +20,9 @@
       <!-- Barra de navegación para agregar, buscar y filtrar -->
       <div class="navigation">
         <ion-row class="ion-align-items-center">
-          <!-- Botón para agregar nota -->
           <ion-col size="2">
             <ion-buttons>
-              <ion-button [routerLink]="['/notas', ]">
+              <ion-button [routerLink]="['/notas', carnetEstudiante]">
                 <ion-icon name="arrow-back"></ion-icon>
                 Volver a Notas
               </ion-button>
@@ -31,9 +30,17 @@
           </ion-col>
           <ion-col size="2">
             <ion-buttons>
-              <ion-button (click)="abrirModal()">
+              <ion-button (click)="abrirModal()" [disabled]="calificacionesExistentes">
                 <ion-icon name="add"></ion-icon>
                 Agregar Calificaciones
+              </ion-button>
+            </ion-buttons>
+          </ion-col>
+          <ion-col size="2">
+            <ion-buttons>
+              <ion-button (click)="eliminarTodasSubNotas(this.calificacion_id!)">
+                <ion-icon name="trash"></ion-icon>
+                Eliminar todas las calificaciones
               </ion-button>
             </ion-buttons>
           </ion-col>
@@ -45,21 +52,26 @@
       <h2>Carnet del estudiante: {{ carnetEstudiante }}</h2>
       <h2>Clase: {{ claseCalificacion }}</h2>
       <h2>Materia: {{ materiaCalificacion }}</h2>
-      <h2>Nota Final: </h2>
+      <h2>Nota Final: {{ notaFinal.toFixed(2) }}</h2>
       <h2>Fecha: {{ fechaCalificacion }}</h2>
 
       <ion-list *ngIf="paginatedSubNotas.length > 0; else noSubNotas">
-        <ion-item *ngFor="let subnota of paginatedSubNotas">
+        <ion-item *ngFor="let subnota of paginatedSubNotas; let i = index">
           <ion-label>
-            <p>Nota: {{ subnota.subnota }}</p>
+            <h1>Nota {{ i + 1 }}: {{ subnota.subnota }}</h1>
           </ion-label>
           <ion-button slot="end" (click)="abrirModal(subnota)">Editar</ion-button>
-          <ion-button slot="end" color="danger"
-            (click)="eliminarSubNotaEspecifica(subnota.calificacion?.id_calificacion, subnota.id_subnota)">Eliminar</ion-button>
+          <ion-button slot="end" color="danger" (click)="eliminarSubNotaEspecifica(subnota.id_subnota)">
+            Eliminar
+          </ion-button>
         </ion-item>
       </ion-list>
       <ng-template #noSubNotas>
-        <p>No hay subnotas disponibles.</p>
+        <div style="text-align: center; margin-top: 20px;">
+          <ion-icon name="document-text-outline" style="font-size: 50px; color: #ccc;"></ion-icon>
+          <h3 style="color: #555; margin-top: 10px;">¡No hay subnotas disponibles!</h3>
+          <p style="color: #777;">Todavía no has agregado ninguna subnota para esta materia. ¡Empieza añadiendo una nueva!</p>
+        </div>
       </ng-template>
 
       <!-- Modal crear/editar -->
@@ -73,7 +85,7 @@
               </ion-buttons>
             </ion-toolbar>
           </ion-header>
-      
+
           <ion-content class="ion-padding">
             <ng-container *ngFor="let inputIndex of inputsArray; let i = index">
               <ion-item>
@@ -81,7 +93,7 @@
                 <ion-input type="number" [(ngModel)]="subNotasArray[i]"></ion-input>
               </ion-item>
             </ng-container>
-      
+
             <ion-button expand="block" [disabled]="!isAtLeastOneInputFilled()" (click)="guardarSubNota()">
               Guardar
             </ion-button>

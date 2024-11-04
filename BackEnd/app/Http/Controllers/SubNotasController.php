@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\SubNotas;
 use App\Models\Estudiantes;
 use App\Models\Calificaciones;
+use Illuminate\Support\Facades\Log;
 use App\Models\Grados;
 
 class SubNotasController extends Controller
@@ -29,11 +30,9 @@ class SubNotasController extends Controller
 
         // Obtener la calificación
         $calificacion = Calificaciones::findOrFail($calificacion_id);
-        \Log::info("Datos de calificación: " . json_encode($calificacion));
 
         // Obtener el estudiante asociado a esta calificación
         $estudiante = Estudiantes::find($calificacion->estudiante_id); // Asumiendo que hay un campo `estudiante_id`
-        \Log::info("Datos del estudiante: " . json_encode($estudiante));
 
         if (!$estudiante || !$estudiante->grado) {
             return response()->json([
@@ -42,14 +41,10 @@ class SubNotasController extends Controller
         }
 
         $grado = $estudiante->grado; // Obtener el grado del estudiante
-        \Log::info("Datos de grado: " . json_encode($grado));
 
         // Verificar que el número de subnotas no exceda el valor de "registros" en la tabla Grados
         $numRegistrosPermitidos = (int) $grado->registros;
         $numSubNotas = count($request->subnotas);
-
-        \Log::info("Número de registros permitidos para el grado: $numRegistrosPermitidos");
-        \Log::info("Subnotas recibidas: " . json_encode($request->subnotas));
 
         if ($numSubNotas > $numRegistrosPermitidos) {
             return response()->json([
@@ -94,9 +89,20 @@ class SubNotasController extends Controller
             ], 404);
         }
 
+        // Convertir las subnotas a un array y asegurar que 'subnota' sea numérico
+        $subnotasArray = $subnotas->map(function ($subnota) {
+            return [
+                'id_subnota' => $subnota->id_subnota,
+                'calificacion_id' => $subnota->calificacion_id,
+                'subnota' => (float) $subnota->subnota, // Convertir a float
+                'created_at' => $subnota->created_at,
+                'updated_at' => $subnota->updated_at
+            ];
+        });
+
         return response()->json([
             'calificacion' => $calificacion,
-            'subnotas' => $subnotas->toArray(), // Convierte a un array
+            'subnotas' => $subnotasArray->toArray(), // Convierte a un array
         ], 200);
     }
 
@@ -109,13 +115,24 @@ class SubNotasController extends Controller
             'subnotas.*' => 'required|numeric|min:0|max:10',
         ]);
 
-        // Obtener la calificación y el grado asociado
+        // Obtener la calificación
         $calificacion = Calificaciones::findOrFail($calificacion_id);
-        $grado = Grados::findOrFail($calificacion->clase->grado_id);
+
+        // Obtener el estudiante asociado a esta calificación
+        $estudiante = Estudiantes::find($calificacion->estudiante_id); // Asumiendo que hay un campo `estudiante_id`
+
+        if (!$estudiante || !$estudiante->grado) {
+            return response()->json([
+                'error' => 'No se pudo encontrar el grado asociado a este estudiante.'
+            ], 400);
+        }
+
+        $grado = $estudiante->grado; // Obtener el grado del estudiante
 
         // Verificar el número de subnotas permitidas
         $numRegistrosPermitidos = (int) $grado->registros;
         $numSubNotas = count($request->subnotas);
+
 
         if ($numSubNotas > $numRegistrosPermitidos) {
             return response()->json([
@@ -189,36 +206,65 @@ class SubNotasController extends Controller
     // Cambiar el valor de una subnota específica a 0
     public function deleteSubNota($id_subnota)
     {
-        // Obtener la subnota específica
-        $subnota = SubNotas::findOrFail($id_subnota);
+        try {
+            // Obtener la subnota específica
+            $subnota = SubNotas::findOrFail($id_subnota);
 
-        // Cambiar el valor de la subnota a 0
-        $subnota->subnota = 0;
-        $subnota->save();
+            // Log del estado actual de la subnota
+            Log::info('Subnota encontrada:', ['id' => $id_subnota, 'subnota' => $subnota]);
 
-        // Recalcular la nota final
-        $calificacion_id = $subnota->calificacion_id;
-        $subnotas = SubNotas::where('calificacion_id', $calificacion_id)->get();
-        $numSubNotas = count($subnotas);
+            // Cambiar el valor de la subnota a 0
+            $subnota->subnota = 0;
 
-        // Si hay subnotas, recalcular la nota final
-        if ($numSubNotas > 0) {
-            $notaFinal = array_sum($subnotas->pluck('subnota')->toArray()) / $numSubNotas;
+            // Guardar y verificar si se actualizó correctamente
+            if (!$subnota->save()) {
+                Log::error('No se pudo actualizar la subnota.', ['id' => $id_subnota]);
+                return response()->json([
+                    'message' => 'No se pudo actualizar la subnota.',
+                ], 500);
+            }
 
-            // Actualizar la nota final en la tabla calificaciones
-            $calificacion = Calificaciones::findOrFail($calificacion_id);
-            $calificacion->nota_final = $notaFinal;
-            $calificacion->save();
-        } else {
-            // Si no hay subnotas, eliminar la nota final
-            $calificacion = Calificaciones::findOrFail($calificacion_id);
-            $calificacion->nota_final = null;
-            $calificacion->save();
+            // Log después de guardar
+            Log::info('Subnota actualizada a 0:', ['id' => $id_subnota, 'subnota' => $subnota->subnota]);
+
+            // Recalcular la nota final
+            $calificacion_id = $subnota->calificacion_id;
+            $subnotas = SubNotas::where('calificacion_id', $calificacion_id)->get();
+            $numSubNotas = $subnotas->count();
+
+            // Log del número de subnotas
+            Log::info('Número de subnotas encontradas:', ['calificacion_id' => $calificacion_id, 'numSubNotas' => $numSubNotas]);
+
+            // Si hay subnotas, recalcular la nota final
+            if ($numSubNotas > 0) {
+                // Calcular la nueva nota final
+                $notaFinal = $subnotas->pluck('subnota')->sum() / $numSubNotas;
+
+                // Log del nuevo valor de la nota final
+                Log::info('Nota final recalculada:', ['calificacion_id' => $calificacion_id, 'nota_final' => $notaFinal]);
+
+                // Actualizar la nota final en la tabla calificaciones
+                $calificacion = Calificaciones::findOrFail($calificacion_id);
+                $calificacion->nota_final = $notaFinal;
+                $calificacion->save();
+            } else {
+                // Si no hay subnotas, eliminar la nota final
+                $calificacion = Calificaciones::findOrFail($calificacion_id);
+                $calificacion->nota_final = null;
+                $calificacion->save();
+            }
+
+            return response()->json([
+                'message' => 'Subnota actualizada a 0 correctamente.',
+                'nota_final' => $calificacion->nota_final,
+            ], 200);
+        } catch (\Exception $e) {
+            // Manejo de errores
+            Log::error('Error al actualizar la subnota.', ['error' => $e->getMessage(), 'id' => $id_subnota]);
+            return response()->json([
+                'message' => 'Error al actualizar la subnota.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        return response()->json([
-            'message' => 'Subnota actualizada a 0 correctamente.',
-            'nota_final' => $calificacion->nota_final,
-        ], 200);
     }
 }

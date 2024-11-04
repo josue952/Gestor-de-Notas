@@ -57,7 +57,6 @@ export class SubNotasPage implements OnInit {
   subNotasArray: number[] = [];
   inputsArray: number[] = []; // Controla la cantidad de inputs en el modal
 
-
   calificacion_id: number | null = null;
   nombreEstudiante: string | undefined;
   carnetEstudiante: number | undefined;
@@ -82,6 +81,9 @@ export class SubNotasPage implements OnInit {
     calificacion_id: 0,
     subnota: 0,
   };
+
+  calificacionesExistentes: boolean = false; // Nueva propiedad
+  notaFinal: number = 0; // Nueva propiedad para almacenar la nota final
 
   constructor(
     private route: ActivatedRoute,
@@ -163,10 +165,15 @@ export class SubNotasPage implements OnInit {
         const response = await this.subNotasService.getSubNotas(
           this.calificacion_id
         );
-        // Asegúrate de que la respuesta contiene la estructura que esperas
         if (response && response.subnotas && Array.isArray(response.subnotas)) {
           this.subnota = response.subnotas; // Asigna el array de sub-notas al estado
           console.log('SubNotas cargadas:', this.subnota);
+
+          // Actualiza la propiedad que verifica si hay calificaciones existentes
+          this.calificacionesExistentes = this.subnota.length > 0; // Establece en true si hay al menos una calificación
+
+          // Calcular la nota final
+          this.notaFinal = this.calcularNotaFinal(); // Agrega esta línea
         } else {
           console.error('getSubNotas no retornó un array válido:', response);
         }
@@ -187,53 +194,105 @@ export class SubNotasPage implements OnInit {
   }
 
   abrirModal(subnota?: SubNota) {
+    // Siempre permite abrir el modal para editar
     this.modalAbierto = true;
 
-    // Si ya existen subnotas, inicializa los inputs con esos valores
     if (subnota) {
+      // Cargar datos de la subnota seleccionada
       this.subNotaActual = { ...subnota };
-      this.subNotasArray = [subnota.subnota]; // Asumiendo que `subnota.subnota` is a single number
+      this.subNotasArray = this.subnota.map((sn) => sn.subnota); // Cargar las subnotas en el array directamente
+      this.inputsArray = Array(this.registros_gradoCalificacion).fill(0); // Asegúrate de que los inputs estén preparados
     } else {
-      this.subNotaActual = {
-        id_subnota: 0,
-        calificacion_id: 0,
-        subnota: 0,
-      };
-      // Genera el array vacío basado en `registros_gradoCalificacion` (número de inputs)
-      this.inputsArray = Array(this.registros_gradoCalificacion).fill(0);
-      this.subNotasArray = new Array(this.registros_gradoCalificacion).fill(null);
+      // Inicializa el modal para agregar nueva nota
+      if (!this.calificacionesExistentes) {
+        // Solo inicializa si no existen calificaciones
+        this.subNotaActual = { id_subnota: 0, calificacion_id: 0, subnota: 0 };
+        this.inputsArray = Array(this.registros_gradoCalificacion).fill(0);
+        this.subNotasArray = new Array(this.registros_gradoCalificacion).fill(
+          null
+        );
+      } else {
+        // Si hay calificaciones, puedes deshabilitar la adición pero permitir la edición
+        this.subNotaActual = { id_subnota: 0, calificacion_id: 0, subnota: 0 };
+      }
     }
   }
 
   cerrarModal() {
     this.modalAbierto = false;
   }
+
+  calcularNotaFinal(): number {
+    const totalSubNotas = this.subnota.reduce((sum, subNota) => sum + subNota.subnota, 0);
+    const cantidadSubNotas = this.subnota.length;
   
+    return cantidadSubNotas > 0 ? totalSubNotas / this.registros_gradoCalificacion! : 0; // Retorna 0 si no hay subnotas
+  }
+
   // Método para verificar que al menos un input tiene un valor
   isAtLeastOneInputFilled(): boolean {
-    return this.subNotasArray.some((nota) => nota !== null && nota !== undefined && nota !== 0);
+    return this.subNotasArray.some(
+      (nota) => nota !== null && nota !== undefined && nota !== 0
+    );
   }
-  
-  // Modifica el método de guardar subnota
+
   async guardarSubNota() {
     try {
-      // Filtra los valores vacíos para enviar solo las subnotas que tienen valor
-      const subnotas = this.subNotasArray.filter(nota => nota !== null && nota !== undefined && nota !== 0);
+      // Convierte todas las notas a float
+      const notasAEnviar = this.subNotasArray.map((nota) => {
+        if (typeof nota === 'string') {
+          const parsedNota = parseFloat(nota);
+          return isNaN(parsedNota) ? null : parsedNota; // Maneja el caso donde la conversión falla
+        } else if (typeof nota === 'number') {
+          return nota; // Ya es un número, no necesita conversión
+        } else {
+          return null; // Si no es ni string ni number
+        }
+      });
+
+      // Filtra notas nulas o no válidas
+      const validNotas = notasAEnviar.filter((nota) => nota !== null);
+
+      // Aquí ya tienes el arreglo validNotas que quieres enviar.
       if (this.subNotaActual.id_subnota) {
-        // Llama a `updateNota` con el array de subnotas si existe `id_subnota`
-        await this.subNotasService.updateNota(this.calificacion_id!, { ...this.subNotaActual, subnotas });
-      } else {
-        // Llama a `createSubNota` con el array de subnotas si es una nueva nota
-        console.log('ID calificación:', this.calificacion_id);
-        await this.subNotasService.createSubNota(this.calificacion_id!, { subnotas });
+        // Actualizar solo la subnota correspondiente
+        // Supongo que el ID está en subNotaActual y que quieres actualizar
+        const indexToUpdate = this.subNotaActual.id_subnota - 1; // Ajusta el índice según cómo estés manejando IDs
+
+        // Actualiza solo la nota que se está editando
+        if (indexToUpdate >= 0 && indexToUpdate < validNotas.length) {
+          validNotas[indexToUpdate] = this.subNotaActual.subnota; // Actualiza solo la nota que se está editando
+        }
       }
+
+      // Envía las notas en el formato correcto
+      await this.subNotasService.updateNota(this.calificacion_id!, {
+        subnotas: validNotas, // Enviar el formato correcto
+      });
+
       this.cerrarModal();
       this.cargarSubNotas();
     } catch (error) {
-      console.error('Error al guardar la calificacion:', error);
+      console.error('Error al guardar la calificación:', error);
+      console.log('Nota a guardar:', this.subNotasArray);
+
+      // Mensaje de error por defecto
+      let mensajeError = 'Por favor, intente nuevamente más tarde';
+
+      // Verifica si el error tiene la estructura esperada
+      if (error && error && typeof error === 'string') {
+        mensajeError = error; // Asigna directamente el mensaje de error
+      } else if (error === 'validation_failed' && error) {
+        mensajeError = Object.values(error)
+          .map((err: any) => err[0])
+          .join(', ');
+      }
+
+      this.mostrarAlertaError(
+        'Error al guardar el estudiante. ' + mensajeError
+      );
     }
   }
-
 
   async mostrarAlertaError(mensaje: string) {
     const alert = await this.alertController.create({
@@ -254,7 +313,7 @@ export class SubNotasPage implements OnInit {
     const alert = await this.alertController.create({
       header: 'Confirmación',
       message:
-        '¿Está seguro de que desea eliminar todas las sub-notas de esta calificación?',
+        '¿Está seguro de que desea eliminar todas las notas de esta calificación?',
       buttons: [
         {
           text: 'Cancelar',
@@ -282,17 +341,10 @@ export class SubNotasPage implements OnInit {
   }
 
   // Método para eliminar una sub-nota específica de una calificación
-  async eliminarSubNotaEspecifica(calificacionId?: number, subNotaId?: number) {
-    if (calificacionId === undefined || subNotaId === undefined) {
-      console.error(
-        'El ID de la calificación o de la sub-nota no está definido'
-      );
-      return;
-    }
-
+  async eliminarSubNotaEspecifica(subNotaId?: number) {
     const alert = await this.alertController.create({
       header: 'Confirmación',
-      message: '¿Está seguro de que desea eliminar esta sub-nota?',
+      message: '¿Está seguro de que desea eliminar esta nota?',
       buttons: [
         {
           text: 'Cancelar',
@@ -306,13 +358,20 @@ export class SubNotasPage implements OnInit {
           text: 'Eliminar',
           handler: async () => {
             try {
+              // Llama al servicio para eliminar la sub-nota
               await this.subNotasService.deleteSubNota(
-                calificacionId,
-                subNotaId
+                subNotaId!,
+                this.calificacion_id!
               );
+
+              console.log('Sub-nota eliminada:', subNotaId);
+              console.log('Calificación actual:', this.calificacion_id);
               await this.cargarSubNotas(); // Recarga las sub-notas después de eliminar
             } catch (error) {
               console.error('Error al eliminar la sub-nota:', error);
+              this.mostrarAlertaError(
+                'No se pudo eliminar la sub-nota. Intente nuevamente.'
+              );
             }
           },
         },
