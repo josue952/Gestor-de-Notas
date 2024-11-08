@@ -10,6 +10,8 @@ use App\Http\Controllers\GradosController;
 use App\Http\Controllers\EstudiantesController;
 use App\Http\Controllers\CalificacionesController;
 use App\Http\Controllers\SubNotasController;
+use App\Http\Controllers\GradoMateriaController;
+use App\Http\Controllers\SeccionesController;
 
 // Rutas de autenticación
 Route::post('/login', [AuthController::class, 'login']);
@@ -55,6 +57,7 @@ Route::group(['prefix' => 'estudiantes'], function () {
     Route::post('/', [EstudiantesController::class, 'store']); // Crear estudiante
     Route::get('/', [EstudiantesController::class, 'index']); // Obtener todos los estudiantes
     Route::get('/{carnet_estudiante}', [EstudiantesController::class, 'show']); // Obtener estudiante por carnet
+    Route::get('usuario/alumnosSinRegistrar', [EstudiantesController::class, 'obtenerAlumnosSinRegistrar']); // Obtener todos los alumnos que no han sido registrados
     Route::put('/{carnet_estudiante}', [EstudiantesController::class, 'update']); // Actualizar estudiante por carnet
     Route::delete('/{carnet_estudiante}', [EstudiantesController::class, 'destroy']); // Eliminar estudiante por carnet
 });
@@ -64,9 +67,10 @@ Route::group(['prefix' => 'calificaciones'], function () {
     Route::post('/', [CalificacionesController::class, 'store']); // Crear una nueva calificación
     Route::get('{id_calificacion}', [CalificacionesController::class, 'show']); // Obtener una calificación por su ID
     Route::get('estudiante/{estudiante_id}', [CalificacionesController::class, 'obtenerCalificacionesPorEstudiante']); // Obtener todas las calificaciones de un estudiante por su ID
+    Route::get('materia/{materia_id}', [CalificacionesController::class, 'obtenerClasesPorMateria']); // Obtener todas las clases de una materia por su ID  
     Route::put('{id_calificacion}', [CalificacionesController::class, 'update']); // Actualizar una calificación por su ID
     Route::delete('{id_calificacion}', [CalificacionesController::class, 'destroy']); // Eliminar una calificación por su ID
-});
+});     
 
 // Rutas de subnotas
 Route::group(['prefix' => 'calificaciones/{calificacion_id}/subnotas'], function () {
@@ -76,4 +80,16 @@ Route::group(['prefix' => 'calificaciones/{calificacion_id}/subnotas'], function
     Route::delete('/', [SubNotasController::class, 'destroy']); // Eliminar todas las subnotas de una calificación
     Route::delete('/{id_subnota}', [SubNotasController::class, 'deleteSubNota']); // Eliminar una subnota específica
 });
+
+// Rutas de grados_materias
+Route::group(['prefix' => 'grados/{grado_id}/materias'], function () {
+    Route::post('/', [GradoMateriaController::class, 'store']); // Asignar una materia a un grado
+    Route::get('/', [GradoMateriaController::class, 'index']); // Obtener todas las materias de un grado
+    Route::get('/{materia_id}', [GradoMateriaController::class, 'show']); // Obtener una materia específica en un grado
+    Route::put('/{materia_id}', [GradoMateriaController::class, 'update']); // Actualizar una relación específica de grado-materia
+    Route::delete('/{materia_id}', [GradoMateriaController::class, 'destroy']); // Eliminar una materia específica de un grado
+});
+
+Route::get('secciones/', [SeccionesController::class, 'get_secciones']); // Obtener todas las secciones
+Route::get('secciones/{id}', [SeccionesController::class, 'get_seccion']); // Obtener una seccion por ID
 

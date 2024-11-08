@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Calificaciones;
+use App\Models\Clases;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Validator;
@@ -35,16 +36,19 @@ class CalificacionesController extends Controller
             ], 400);
         }
 
-        // Verificar si ya existe una calificación para el estudiante en la misma clase y materia
-        $existingCalificacion = Calificaciones::where([
-            ['estudiante_id', $request->estudiante_id],
-            ['clase_id', $request->clase_id],
-            ['materia_id', $request->materia_id]
-        ])->first();
+        // Obtener el grado asociado a la clase seleccionada
+        $clase = Clases::find($request->clase_id);
+        $gradoId = $clase->grado_id;
+
+        // Verificar si ya existe una calificación para el estudiante en la misma materia y grado
+        $existingCalificacion = Calificaciones::whereHas('clase', function ($query) use ($gradoId, $request) {
+            $query->where('grado_id', $gradoId)
+                ->where('materia_id', $request->materia_id);
+        })->where('estudiante_id', $request->estudiante_id)->first();
 
         if ($existingCalificacion) {
             return response()->json([
-                'error' => 'Ya existe una calificación registrada para este estudiante en la misma clase y materia.'
+                'error' => 'El estudiante ya tiene una calificación registrada para esta materia en el mismo grado.'
             ], 400);
         }
 
@@ -65,11 +69,16 @@ class CalificacionesController extends Controller
     }
 
     // Obtener todas las calificaciones de un alumno por ID de estudiante
-    public function obtenerCalificacionesPorEstudiante($estudiante_id)
+    public function obtenerCalificacionesPorEstudiante($carnet_estudiante)
     {
-        // Obtener todas las calificaciones del estudiante, y devolvera tambien el nombre de la clase y materia
-        $calificaciones = Calificaciones::where('estudiante_id', $estudiante_id)
-            ->with(['clase:id_clase,nombre', 'materia:id_materia,nombre']) // Incluir nombre de clase y materia
+        // Obtener todas las calificaciones del estudiante, incluyendo nombre de clase, materia, estudiante y maestro
+        $calificaciones = Calificaciones::where('estudiante_id', $carnet_estudiante)
+            ->with([
+                'clase:id_clase,nombre',
+                'materia:id_materia,nombre',
+                'estudiante.usuario:id_usuario,nombre_completo', // Obtener el nombre completo del estudiante desde la relación usuario
+                'maestro:id_usuario,nombre_completo' // Obtener el nombre completo del maestro
+            ])
             ->get();
 
         return response()->json($calificaciones);
@@ -77,12 +86,25 @@ class CalificacionesController extends Controller
 
     // Obtener una calificación por ID
     public function show($id_calificacion)
-    {   
-        // Obtener la calificación por ID, y devolvera tambien el nombre de la clase y materia
-        $calificacion = Calificaciones::with(['clase:id_clase,nombre', 'materia:id_materia,nombre']) // Incluir nombre de clase y materia
-            ->findOrFail($id_calificacion);
+    {
+        // Obtener la calificación por ID, incluyendo nombre de clase, materia, estudiante y maestro
+        $calificacion = Calificaciones::with([
+            'clase:id_clase,nombre',
+            'materia:id_materia,nombre',
+            'estudiante.usuario:id_usuario,nombre_completo', // Obtener el nombre completo del estudiante desde la relación usuario
+            'maestro:id_usuario,nombre_completo' // Obtener el nombre completo del maestro
+        ])->findOrFail($id_calificacion);
 
-        return response()->json([$calificacion]);
+        return response()->json($calificacion);
+    }
+
+    //Obtener todas las clases segun el id de la materia
+    public function obtenerClasesPorMateria($materia_id)
+    {
+        // Obtener todas las clases de la materia seleccionada
+        $clases = Clases::where('materia_id', $materia_id)->get();
+
+        return response()->json($clases);
     }
 
     // Actualizar una calificación

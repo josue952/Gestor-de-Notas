@@ -26,7 +26,7 @@ export class LogoutComponent implements OnInit {
     if (this.userEmail) {
       try {
         const user = await this.usersService.getUser(this.userEmail); // Llama al servicio con el correo
-        this.userName = user.nombre; // Asigna el nombre del usuario
+        this.userName = user.nombre_completo; // Asigna el nombre del usuario
       } catch (error) {
         console.error('Error al obtener el nombre del usuario:', error);
       }

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User; // Asegúrate de tener el modelo User
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
@@ -16,34 +16,23 @@ class UserController extends Controller
         // Validación de los datos del formulario con mensajes personalizados
         $validator = Validator::make($request->all(), [
             'username' => 'required|string|max:50|unique:users,username',
-            'nombre' => 'required|string|max:100',
-            'apellido' => 'required|string|max:100',
+            'nombre_completo' => 'required|string|max:200|unique:users,nombre_completo', // Cambiado a nombre_completo
             'email' => 'required|string|email|max:100|unique:users,email',
             'password' => 'required|string|min:6',
             'rol' => 'required|in:Maestro,Alumno,Administrador',
         ], [
-            //Validaciones personalizadas
-            'username.required' => 'El nombre de usuario es obligatorio',
+            'username.required' => 'El nombre de usuario es requerido',
             'username.unique' => 'El nombre de usuario ya está en uso',
-            'nombre.required' => 'El nombre es obligatorio',
-            'apellido.required' => 'El apellido es obligatorio',
-            'email.required' => 'El correo electrónico es obligatorio',
-            'email.unique' => 'El correo electrónico ya está registrado',
+            'nombre_completo.required' => 'El nombre completo es requerido',
+            'nombre_completo.unique' => 'El nombre completo ya está en uso',
+            'email.required' => 'El correo electrónico es requerido',
             'email.email' => 'El correo electrónico debe ser una dirección válida',
-            'password.required' => 'La contraseña es obligatoria',
+            'email.unique' => 'El correo electrónico ya está registrado',
+            'password.required' => 'La contraseña es requerida',
             'password.min' => 'La contraseña debe tener al menos 6 caracteres',
-            'rol.required' => 'El rol es obligatorio',
+            'rol.required' => 'El rol es requerido',
             'rol.in' => 'El rol debe ser Maestro, Alumno o Administrador',
         ]);
-
-        // Validación de combinación única de nombre y apellido
-        if (
-            User::where('nombre', $request->nombre)
-                ->where('apellido', $request->apellido)
-                ->exists()
-        ) {
-            $validator->errors()->add('nombre', 'La combinación de nombre y apellido ya está registrada.');
-        }
 
         if ($validator->fails()) {
             Log::error('Errores de validación al crear usuario:', $validator->errors()->toArray());
@@ -53,8 +42,7 @@ class UserController extends Controller
         // Crear el usuario
         $user = User::create([
             'username' => $request->username,
-            'nombre' => $request->nombre,
-            'apellido' => $request->apellido,
+            'nombre_completo' => $request->nombre_completo, // Cambiado a nombre_completo
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'rol' => $request->rol,
@@ -96,15 +84,14 @@ class UserController extends Controller
             $request->all(),
             [
                 'username' => 'string|max:50|unique:users,username,' . $user->id_usuario . ',id_usuario',
-                'nombre' => 'string|max:100',
-                'apellido' => 'string|max:100',
+                'nombre_completo' => 'string|max:200|unique:users,nombre_completo,' . $user->id_usuario . ',id_usuario',
                 'email' => 'string|email|max:100|unique:users,email,' . $user->id_usuario . ',id_usuario',
                 'password' => 'nullable|string|min:6',
                 'rol' => 'in:Maestro,Alumno,Administrador',
             ],
             [
-                //Validaciones personalizadas
                 'username.unique' => 'El nombre de usuario ya está en uso',
+                'nombre_completo.unique' => 'El nombre completo ya está en uso', 
                 'email.unique' => 'El correo electrónico ya está registrado',
                 'email.email' => 'El correo electrónico debe ser una dirección válida',
                 'password.min' => 'La contraseña debe tener al menos 6 caracteres',
@@ -113,11 +100,11 @@ class UserController extends Controller
         );
 
         if ($validator->fails()) {
-            Log::error('Errores de validación al editar el usuario:', $validator->errors()->toArray());
+            Log::error('Errores de validación al crear el usuario:', $validator->errors()->toArray());
             return response()->json(['status' => 'validation_failed', 'errors' => $validator->errors()], 400);
         }
 
-        $user->fill($request->only(['username', 'nombre', 'apellido', 'email', 'rol']));
+        $user->fill($request->only(['username', 'nombre_completo', 'email', 'rol'])); // Cambiado a nombre_completo
 
         // Solo actualiza la contraseña si se proporciona una nueva
         if ($request->filled('password')) {

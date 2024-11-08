@@ -49,10 +49,8 @@
       <ion-list>
         <ion-item *ngFor="let usuario of paginatedUsuarios">
           <ion-label>
-            <h2>Usuario ID: {{ usuario.id_usuario }}</h2>
-            <p>Nombre de usuario: {{ usuario.username }}</p>
-            <p>Nombre: {{ usuario.nombre }}</p>
-            <p>Apellido: {{ usuario.apellido }}</p>
+            <h2>Nombre de usuario: {{ usuario.username }}</h2>
+            <p>Nombre Completo: {{ usuario.nombre_completo }}</p>
             <p>Email: {{ usuario.email }}</p>
             <p>Rol: {{ usuario.rol }}</p>
           </ion-label>
@@ -92,20 +90,12 @@
 
           <ion-content class="ion-padding">
             <ion-item>
-              <ion-label position="floating">Usuario ID</ion-label>
-              <ion-input type="number" [(ngModel)]="usuarioActual.id_usuario" required disabled></ion-input>
-            </ion-item>
-            <ion-item>
               <ion-label position="floating">Nombre de usuario</ion-label>
               <ion-input type="text" [(ngModel)]="usuarioActual.username" required></ion-input>
             </ion-item>
             <ion-item>
-              <ion-label position="floating">Nombre</ion-label>
-              <ion-input type="text" [(ngModel)]="usuarioActual.nombre" required></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-label position="floating">Apellido</ion-label>
-              <ion-input type="text" [(ngModel)]="usuarioActual.apellido" required></ion-input>
+              <ion-label position="floating">Nombre Completo</ion-label>
+              <ion-input type="text" [(ngModel)]="usuarioActual.nombre_completo" required></ion-input>
             </ion-item>
             <ion-item>
               <ion-label position="floating">Email</ion-label>
@@ -116,7 +106,9 @@
               <ion-input type="password" [(ngModel)]="usuarioActual.password" required></ion-input>
             </ion-item>
             <ion-item>
-              <ion-select aria-label="Roles" placeholder="Rol" [(ngModel)]="usuarioActual.rol">
+              <ion-label position="floating">Rol</ion-label>
+              <ion-select aria-label="Roles" [(ngModel)]="usuarioActual.rol"
+                [disabled]="usuarioActual.id_usuario ? true : false">
                 <ion-select-option value="Maestro">Maestro</ion-select-option>
                 <ion-select-option value="Alumno">Alumno</ion-select-option>
                 <ion-select-option value="Administrador">Administrador</ion-select-option>
