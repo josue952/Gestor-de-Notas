@@ -1,0 +1,31 @@
+.grados-container {
+    display: flex;
+    flex-direction: row;
+}
+
+app-sidebar {
+    flex-shrink: 0; /* Sidebar tiene un tamaño fijo */
+}
+
+.grados-content {
+    flex-grow: 1; /* El contenido ocupará todo el espacio restante */
+    padding: 20px;
+    background-color: #3532325d; /* Color de fondo para el contenido del Dashboard */
+}
+
+ion-item {
+    margin-bottom: 15px; /* Espaciado entre items */
+}
+
+.navigation {
+    display: flex;
+    gap: 15px; /* Añade espacio entre los botones */
+    padding: 10px; /* Añade un poco de padding alrededor de la navegación */
+    
+    ion-button {
+        --padding-start: 12px;
+        --padding-end: 12px;
+        --color: white;
+        border-radius: 8px;
+    }
+}

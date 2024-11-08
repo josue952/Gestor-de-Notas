@@ -13,17 +13,22 @@ app-sidebar {
   background-color: #3532325d; /* Color de fondo para el contenido del Dashboard */
 }
 
-ion-item {
-  margin-bottom: 15px; /* Espaciado entre items */
+.navigation {
+  margin-bottom: 20px; /* Espaciado inferior para separar de la lista de usuarios */
 }
 
-.editar-formulario {
-  ion-item {
-    margin-bottom: 15px;
-  }
+/* Agregar este estilo para eliminar el espacio adicional en la parte inferior */
+ion-content {
+  --background: transparent; /* Evita el color de fondo predeterminado */
+  height: calc(100% - 56px); /* Ajusta la altura, considerando la altura del header */
 }
 
-.btn-agregar{
-    width: 50%;
-    margin: 0 auto;
+.filter-container {
+  display: flex;
+  align-items: center; /* Centra verticalmente el select y el label */
+}
+
+.filter-container ion-select {
+  width: auto; /* Asegura que el select solo ocupe el espacio necesario */
+  margin-left: 15px; /* Espacio entre el select y el label */
 }
