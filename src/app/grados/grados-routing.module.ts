@@ -6,7 +6,12 @@ const routes: Routes = [
   {
     path: '',
     component: GradosPage
+  },
+  {
+    path: 'grados-materia/:id_grado', // Ruta con parámetro para el ID del grado
+    loadChildren: () => import('./grados-materia/grados-materia.module').then(m => m.GradosMateriaPageModule)
   }
+
 ];
 
 @NgModule({

@@ -17,14 +17,13 @@ ion-item {
   margin-bottom: 15px; /* Espaciado entre items */
 }
 
-.editar-formulario {
-  padding: 20px;
-  ion-item {
-    margin-bottom: 15px;
-  }
+
+.filter-container {
+  display: flex;
+  align-items: center; /* Centra verticalmente el select y el label */
 }
 
-.btn-agregar{
-    width: 50%;
-    margin: 0 auto;
+.filter-container ion-select {
+  width: auto; /* Asegura que el select solo ocupe el espacio necesario */
+  margin-left: 15px; /* Espacio entre el select y el label */
 }

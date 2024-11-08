@@ -11,26 +11,6 @@
     </div>
     <!-- Navegación -->
     <nav class="flex-1 p-4">
-        <!--Dashboard/inicio-->
-        <a href="/dashboard"
-            class="block py-2 px-4 text-gray-300 hover:bg-gray-700 rounded transition duration-200 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-            <span *ngIf="!isCollapsed">Inicio</span>
-        </a>
-        <!--Notas-->
-        <a href="/notas"
-            class="block py-2 px-4 text-gray-300 hover:bg-gray-700 rounded transition duration-200 mt-2 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <span *ngIf="!isCollapsed">Notas</span>
-        </a>
         <!--Usuarios-->
         <a href="/usuarios"
             class="block py-2 px-4 text-gray-300 hover:bg-gray-700 rounded transition duration-200 mt-2 flex items-center">
@@ -38,7 +18,7 @@
             <span *ngIf="!isCollapsed">Usuarios</span>
         </a>
         <!--Clases-->
-        <a href="#"
+        <a href="/clases"
             class="block py-2 px-4 text-gray-300 hover:bg-gray-700 rounded transition duration-200 mt-2 flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-notebook-text"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9.5 8h5"/><path d="M9.5 12H16"/><path d="M9.5 16H14"/></svg>            
             <span *ngIf="!isCollapsed">Clases</span>
@@ -56,22 +36,10 @@
             <span *ngIf="!isCollapsed">Grados</span>
         </a>
         <!--Estudiantes-->
-        <a href="#"
+        <a href="/estudiantes"
             class="block py-2 px-4 text-gray-300 hover:bg-gray-700 rounded transition duration-200 mt-2 flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             <span *ngIf="!isCollapsed">Estudiantes</span>
-        </a>
-        <!--Configuracion-->
-        <a href="#"
-            class="block py-2 px-4 text-gray-300 hover:bg-gray-700 rounded transition duration-200 mt-2 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <span *ngIf="!isCollapsed">Configuración</span>
         </a>
     </nav>
 </div>
