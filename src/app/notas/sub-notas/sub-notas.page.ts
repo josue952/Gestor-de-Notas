@@ -218,6 +218,21 @@ export class SubNotasPage implements OnInit {
     }
   }
 
+  abrirEditarModal() {
+    this.modalAbierto = true;
+  
+    // Si hay subnotas existentes, carga las subnotas en el modal para editarlas
+    if (this.calificacionesExistentes) {
+      this.subNotasArray = this.subnota.map((sn) => sn.subnota); // Cargar todas las subnotas en el array para edición
+      this.inputsArray = Array(this.registros_gradoCalificacion).fill(0); // Prepara los inputs
+    } else {
+      // Si no hay subnotas, inicializa el modal como vacío
+      this.subNotaActual = { id_subnota: 0, calificacion_id: 0, subnota: 0 };
+      this.inputsArray = Array(this.registros_gradoCalificacion).fill(0);
+      this.subNotasArray = new Array(this.registros_gradoCalificacion).fill(null);
+    }
+  }
+
   cerrarModal() {
     this.modalAbierto = false;
   }

@@ -13,11 +13,6 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'dashboard',
-    loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardPageModule),
-    canActivate: [AuthGuard] // Protege esta ruta con AuthGuard
-  },
-  {
     path: 'materias',
     loadChildren: () => import('./materias/materias.module').then(m => m.MateriasPageModule),
     canActivate: [AuthGuard] // Protege esta ruta con AuthGuard
