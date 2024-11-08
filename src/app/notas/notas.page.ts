@@ -27,6 +27,7 @@ interface Materia {
 interface Usuario {
   id_usuario: number;
   nombre_completo: string;
+  rol: string;
 }
 
 interface Estudiantes {
@@ -66,6 +67,7 @@ export class NotasPage implements OnInit {
   clases: Clase[] = [];
   estudiantes: Estudiantes[] = [];
   usuarios: Usuario[] = [];
+  maestros: Usuario[] = []; 
   grados: Grado[] = [];
   clasesDisponibles = false;
   filtroClase: string = '';
@@ -204,12 +206,16 @@ export class NotasPage implements OnInit {
 
   async cargarUsuarios() {
     try {
-      this.usuarios = await this.usersService.getUsers();
+      const usuarios = await this.usersService.getUsers();
+      this.usuarios = usuarios;
+      this.maestros = this.usuarios.filter((usuario) => usuario.rol === 'Maestro');
       console.log('Usuarios cargados:', this.usuarios);
+      console.log('Maestros:', this.maestros);
     } catch (error) {
       console.error('Error al cargar usuarios:', error);
     }
   }
+
 
   async cargarGrados() {
     try {
