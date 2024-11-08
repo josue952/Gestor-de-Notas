@@ -5,8 +5,7 @@ import { UsersService } from '../services/users.service';
 interface Usuario {
   id_usuario?: number;
   username: string;
-  nombre: string;
-  apellido: string;
+  nombre_completo: string;
   email: string;
   rol: string;
   password?: string;
@@ -26,8 +25,7 @@ export class UsuariosPage implements OnInit {
   usuarioActual: Usuario = {
     id_usuario: 0,
     username: "",
-    nombre: "",
-    apellido: "",
+    nombre_completo: "",
     email: "",
     rol: "",
     password: ""
@@ -48,11 +46,10 @@ export class UsuariosPage implements OnInit {
     this.paginaActual = 1; // Resetea a la primera página al aplicar filtro
     const usuariosFiltrados = this.usuarios.filter(usuario => {
       const coincideNombreUsuario = usuario.username.toLowerCase().includes(this.filtroTexto.toLowerCase());
-      const coincideNombre = usuario.nombre.toLowerCase().includes(this.filtroTexto.toLowerCase());
-      const coincideApellido = usuario.apellido.toLowerCase().includes(this.filtroTexto.toLowerCase());
+      const coincideNombre = usuario.nombre_completo.toLowerCase().includes(this.filtroTexto.toLowerCase());
       const coincideRol = this.filtroRol ? usuario.rol === this.filtroRol : true;
 
-      return (coincideNombreUsuario || coincideNombre || coincideApellido) && coincideRol;
+      return (coincideNombreUsuario || coincideNombre) && coincideRol;
     });
 
     this.paginatedUsuarios = this.paginarUsuarios(usuariosFiltrados);
@@ -103,8 +100,7 @@ export class UsuariosPage implements OnInit {
       this.usuarioActual = {
         id_usuario: 0,
         username: "",
-        nombre: "",
-        apellido: "",
+        nombre_completo: "",
         email: "",
         rol: "",
         password: ""

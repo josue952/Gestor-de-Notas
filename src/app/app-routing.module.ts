@@ -13,29 +13,40 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'dashboard',
-    loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardPageModule),
+    path: 'materias',
+    loadChildren: () => import('./materias/materias.module').then(m => m.MateriasPageModule),
     canActivate: [AuthGuard] // Protege esta ruta con AuthGuard
   },
   {
-    path: 'materias',
-    loadChildren: () => import('./materias/materias.module').then(m => m.MateriasPageModule)
+    path: 'grados',
+    loadChildren: () => import('./grados/grados.module').then(m => m.GradosPageModule),
+    canActivate: [AuthGuard] // Protege esta ruta con AuthGuard
   },
   {
-    path: 'grados',
-    loadChildren: () => import('./grados/grados.module').then(m => m.GradosPageModule)
-  },  {
-    path: 'notas',
-    loadChildren: () => import('./notas/notas.module').then( m => m.NotasPageModule)
+    path: 'notas/:carnet_estudiante',
+    loadChildren: () => import('./notas/notas.module').then( m => m.NotasPageModule),
+    canActivate: [AuthGuard] // Protege esta ruta con AuthGuard
   },
   {
     path: 'usuarios',
-    loadChildren: () => import('./usuarios/usuarios.module').then( m => m.UsuariosPageModule)
+    loadChildren: () => import('./usuarios/usuarios.module').then( m => m.UsuariosPageModule),
+    canActivate: [AuthGuard] // Protege esta ruta con AuthGuard
   },
   {
     path: 'clases',
-    loadChildren: () => import('./clases/clases.module').then( m => m.ClasesPageModule)
+    loadChildren: () => import('./clases/clases.module').then( m => m.ClasesPageModule),
+    canActivate: [AuthGuard] // Protege esta ruta con AuthGuard
   },
+  {
+    path: 'estudiantes',
+    loadChildren: () => import('./estudiantes/estudiantes.module').then( m => m.EstudiantesPageModule),
+    canActivate: [AuthGuard] // Protege esta ruta con AuthGuard
+  },
+  {
+    path: 'sub-notas/:id_calificacion', // Asegúrate de que el nombre del parámetro sea correcto
+    loadChildren: () => import('./notas/sub-notas/sub-notas.module').then(m => m.SubNotasPageModule),
+    canActivate: [AuthGuard] // Protege esta ruta con AuthGuard
+  }
 
 ];
 
