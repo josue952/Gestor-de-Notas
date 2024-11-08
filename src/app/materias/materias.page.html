@@ -1,0 +1,106 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <ion-col size="10">
+          <ion-title>Materias</ion-title>
+        </ion-col>
+        <ion-col size="2" class="ion-text-right">
+          <app-logout></app-logout>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="materias-container">
+    <app-sidebar></app-sidebar>
+    
+    <div class="materias-content">
+      <!-- Barra de navegación para agregar, buscar, filtrar -->
+      <div class="navigation">
+        <ion-row class="ion-align-items-center">
+          <ion-col size="3">
+            <ion-buttons>
+              <ion-button (click)="abrirModal()">
+                <ion-icon name="add"></ion-icon>
+                Agregar Materia
+              </ion-button>
+            </ion-buttons>
+          </ion-col>
+          <ion-col size="5">
+            <ion-searchbar [(ngModel)]="filtroTexto" placeholder="Buscar Materia..."
+              (ionInput)="aplicarFiltro()"></ion-searchbar>
+          </ion-col>
+          <ion-col size="4" class="ion-text-end">
+            <div class="filter-container">
+              <ion-label>Filtrar por Materia</ion-label>
+              <ion-select [(ngModel)]="filtroMateria" (ionChange)="aplicarFiltro()" placeholder="Selecciona una materia">
+                <ion-select-option value="">Todos</ion-select-option>
+                <ion-select-option *ngFor="let materia of materias" [value]="materia.id_materia">
+                  {{ materia.nombre }}
+                </ion-select-option>
+              </ion-select>
+            </div>
+          </ion-col>
+        </ion-row>
+      </div>
+
+      <ion-list>
+        <ion-item *ngFor="let materia of paginatedMaterias">
+          <ion-label>
+            <h2>Materia: {{ materia.nombre }}</h2>
+            <p>Objetivo: {{ materia.objetivo }}</p>
+          </ion-label>
+          <ion-button slot="end" (click)="abrirModal(materia)">Editar</ion-button>
+          <ion-button slot="end" color="danger" (click)="eliminarMateria(materia.id_materia)">Eliminar</ion-button>
+        </ion-item>
+      </ion-list>
+
+      <!-- Controles de paginación -->
+      <ion-row class="ion-margin-top ion-justify-content-center">
+        <ion-col size="auto">
+          <ion-button [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual - 1)">
+            Anterior
+          </ion-button>
+        </ion-col>
+        <ion-col size="auto" class="ion-text-center">
+          <h2>Página {{ paginaActual }} de {{ totalPaginas }}</h2>
+        </ion-col>
+        <ion-col size="auto">
+          <ion-button [disabled]="paginaActual === totalPaginas" (click)="cambiarPagina(paginaActual + 1)">
+            Siguiente
+          </ion-button>
+        </ion-col>
+      </ion-row>
+
+      <!-- Modal crear/editar -->
+      <ion-modal [isOpen]="modalAbierto" (ionModalDidDismiss)="cerrarModal()">
+        <ng-template>
+          <ion-header>
+            <ion-toolbar>
+              <ion-title>{{ materiaActual.id_materia ? 'Editar' : 'Agregar' }} Materia</ion-title>
+              <ion-buttons slot="end">
+                <ion-button (click)="cerrarModal()">Cancelar</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+      
+          <ion-content class="ion-padding">
+            <ion-item>
+              <ion-label position="floating">Nombre de la Materia</ion-label>
+              <ion-input type="text" [(ngModel)]="materiaActual.nombre" required></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating">Objetivo de la materia</ion-label>
+              <ion-input type="text" [(ngModel)]="materiaActual.objetivo" required></ion-input>
+            </ion-item>
+            <ion-button expand="block" (click)="guardarMateria()">Guardar</ion-button>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
+
+    </div>
+  </div>
+</ion-content>

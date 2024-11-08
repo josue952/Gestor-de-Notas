@@ -1,0 +1,29 @@
+.grados-container {
+  display: flex;
+  flex-direction: row;
+}
+
+app-sidebar {
+  flex-shrink: 0; /* Sidebar tiene un tamaño fijo */
+}
+
+.grados-content {
+  flex-grow: 1; /* El contenido ocupará todo el espacio restante */
+  padding: 20px;
+  background-color: #3532325d; /* Color de fondo para el contenido del Dashboard */
+}
+
+ion-item {
+  margin-bottom: 15px; /* Espaciado entre items */
+}
+
+
+.filter-container {
+  display: flex;
+  align-items: center; /* Centra verticalmente el select y el label */
+}
+
+.filter-container ion-select {
+  width: auto; /* Asegura que el select solo ocupe el espacio necesario */
+  margin-left: 15px; /* Espacio entre el select y el label */
+}

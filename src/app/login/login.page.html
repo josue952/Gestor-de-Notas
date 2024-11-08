@@ -1,0 +1,35 @@
+<ion-content class="ion-padding custom-content">
+  <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div class="p-8 bg-white rounded-lg shadow-md w-full max-w-md">
+      <div class="text-center mb-8">
+        <ion-icon name="book-outline" class="text-6xl text-blue-500"></ion-icon>
+        <h1 class="text-3xl font-bold mt-4 text-gray-800">Note Manager</h1>
+        <p class="text-gray-600 mt-2">Inicia sesión para acceder a tus notas</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <ion-item>
+          <ion-label position="floating">Email</ion-label>
+          <ion-input type="email" formControlName="email" class="custom-input"></ion-input>
+        </ion-item>
+        <ion-text color="danger" class="text-xm mt-1" *ngIf="emailControl?.invalid && emailControl?.touched">
+          <p *ngIf="emailControl?.errors?.['required']">El email es obligatorio.</p>
+          <p *ngIf="emailControl?.errors?.['email']">Por favor, introduce una dirección de email válida.</p>
+        </ion-text>
+
+        <ion-item>
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input type="password" formControlName="password" class="custom-input"></ion-input>
+        </ion-item>
+        <ion-text color="danger" class="text-xm mt-1" *ngIf="passwordControl?.invalid && passwordControl?.touched">
+          <p *ngIf="passwordControl?.errors?.['required']">La contraseña es obligatoria.</p>
+          <p *ngIf="passwordControl?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres.</p>
+        </ion-text>
+
+        <ion-button expand="block" type="submit" [disabled]="loginForm.invalid" class="mt-4">
+          Iniciar Sesión
+        </ion-button>
+      </form>
+    </div>
+  </div>
+</ion-content>

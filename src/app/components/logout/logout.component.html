@@ -1,0 +1,10 @@
+<div class="relative flex items-center ml-20">
+  <!-- Nombre y correo del usuario -->
+  <div class="mr-2 text-right cursor-pointer">
+    <p class="font-semibold">{{ userName }}</p>
+    <p class="text-sm text-gray-500">{{ userEmail }}</p>
+  </div>
+
+  <!-- Icono de cierre de sesión -->
+  <ion-icon name="log-out-outline" (click)="presentAlert()" class="cursor-pointer"></ion-icon>
+</div>
